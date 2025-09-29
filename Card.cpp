@@ -1,4 +1,3 @@
-#include <cstring>
 #include <bits/stdc++.h>
 
 #include "Card.hpp"
