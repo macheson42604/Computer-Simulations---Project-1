@@ -6,10 +6,10 @@ CXX = g++
 CXXFLAGS = -Wall -g
 
 # Target executable
-TARGET = uno
+TARGET = game-sim
 
 # For deleting the target
-TARGET_DEL = uno.exe
+TARGET_DEL = game-sim.exe
 
 # Source files
 SRCS = GamePlay.cpp Card.cpp Player.cpp

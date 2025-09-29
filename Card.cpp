@@ -5,12 +5,12 @@
 
 using namespace std;
 
-Card::Card(char chID, string coID) {
-    charID = chID;
-    colorID = coID;
+Card::Card(char cID, char sID) {
+    charID = cID;
+    suitID = sID;
 
-    if (isdigit(chID)) {
-        numID = (short int)chID;
+    if (isdigit(cID)) {
+        numID = (short int)cID;
     }
 }
 
@@ -22,6 +22,6 @@ char Card::read_charID() const {
     return charID;
 }
 
-string Card::read_colorID() const {
-    return colorID;
+char Card::read_suitID() const {
+    return suitID;
 }
