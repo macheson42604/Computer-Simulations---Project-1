@@ -6,9 +6,10 @@ using namespace std;
 /*
 Class - Card
     Purpose: To encapsulate all identification of a single card into one central object.
-    Members
+    Menbers
         Private
             - numID (short int): variable
+                The value assigned to each card, utilizing the following shorthand.
                 2-10 = 2-10
                 Jack = 11
                 Queen = 12
@@ -29,14 +30,14 @@ Class - Card
                 Club = 'C'
 
         Public
-            - Card(char, string): method
-                The inputs of this method correlate respectively and directly to charId and color. This then automatically deducts the numId based on the input charId.
+            - Card(char, char): method
+                The inputs of this method correlate respectively and directly to charId and suitID. This then automatically deduces the numId based on the input charId.
             - read_numID() (short int): method
-                Outputs the numID.
+                Returns the numID. This is const because nothing should ever be altered in this function.
             - read_charID() (char): method
-                Outputs the charID.
+                Returns the charID. This is const because nothing should ever be altered in this function.
             - read_suitID() (char): method
-                Outputs the suitID.
+                Returns the suitID. This is const because nothing should ever be altered in this function.
 */
 class Card {
 private:
