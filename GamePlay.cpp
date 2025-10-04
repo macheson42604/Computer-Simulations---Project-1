@@ -7,16 +7,135 @@
 
 using namespace std;
 
+/*
+ * Coding Style Notes:
+ * functions: snake case (should start with a verb)
+ * variables: camel case
+ */
+
+
+
 // Method Declarations
 void game_setup();
 Player* make_player_list();
 
+
+/**
+ * main(): main function to run both games: War, Trash
+ */
 int main() {
-    game_setup();
+    // running War
+    setup_war();
+    play_war();
+
+    // game_setup();
 
     return 0;
 }
 
+void setup_war() {
+    // make 2 players
+    Player* player1 = new Player("Player 1");
+    Player* player2 = new Player("Player 2");
+
+    // make deck of cards
+
+    // validate deck of cards 
+
+    // shuffle deck of cards
+
+    // split deck of cards between the two players and set to their playing hands
+
+    // Further setup for the War game would go here
+}
+
+void play_war() {
+    // create empty vector of tied cards
+    vector<Card> tiedCards = new vector<Card>();
+
+    // loop until at least one of the players is out of cards
+    while (!player1->read_isOut() && !player2->read_isOut()) {
+        // each player draws the top card from their playing hand
+        Card card1 = player1->draw_from_playing_hand();
+        Card card2 = player2->draw_from_playing_hand();
+
+        // compare the cards and determine the winner of the round
+        // player 1 wins the round
+        if (card1.get_value() > card2.get_value()) {
+            // first add neutral cards to the winner's winning hand
+            if (!tiedCards.empty()) {
+                player1->add_to_winning_hand(tiedCards);
+                // clear the tiedCards vector
+                tiedCards.clear();
+            }
+            // add the winning cards to the winner's winning hand
+            // add player 1's card first, then player 2's card
+            player1->add_to_winning_hand({card1, card2});
+        }
+
+        // player 2 wins the round
+        else if (card2.get_value() > card1.get_value()) {
+             // first add neutral cards to the winner's winning hand
+            if (!tiedCards.empty()) {
+                player2->add_to_winning_hand(tiedCards);
+                // clear the tiedCards vector
+                tiedCards.clear();
+            }
+            // add the winning cards to the winner's winning hand
+            // add player 2's card first, then player 1's card
+            player2->add_to_winning_hand({card2, card1});
+        }
+
+        // players tie the round
+        else {
+            // add both cards to the tiedCards vector (order doesn't matter)
+            tiedCards.push_back(card1);
+            tiedCards.push_back(card2);
+        }
+
+        // check if either player is out of cards (check both playing and winning hands)
+        if (player1->read_playing_hand().empty()) {
+            if (!player1->read_winning_hand().empty()) {
+                player1->shuffle_winning_hand();
+                player1->move_winning_to_playing();
+                player1->clear_winning_hand();
+            }
+            else {
+                player1->set_isOut(true);
+            }
+        }
+        if (player2->read_playing_hand().empty()) {
+            if (!player2->read_winning_hand().empty()) {
+                player2->shuffle_winning_hand();
+                player2->move_winning_to_playing();
+                player2->clear_winning_hand();
+            }
+            else {
+                player2->set_isOut(true);
+            }
+        }
+    }
+
+    // TODO
+    // validate deck of cards (should be all 52 cards accounted for between both players' playing and winning hands, and the tiedCards vector)
+    // correct number and suits of cards
+    // vector<Card> allCards;
+    // allCards.validate_deck();
+
+    // if both players are out (tie game - aka all 52 cards somehow are in the tiedCards deck), no player earns a point
+    // player 2 is out, player 1 is not
+    if (!player1->read_isOut() && player2->read_isOut()) {
+        player1->increment_wins();
+    }
+    // player 1 is out, player 2 is not
+    else if (player1->read_isOut() && !player2->read_isOut()) {
+        player2->increment_wins();
+    }
+}
+
+
+
+/*
 // Method Definitions
 void game_setup() {
     Player* currentPlayer = make_player_list();
@@ -34,3 +153,4 @@ Player* make_player_list() {
 
     return firstPlayer;
 }
+*/

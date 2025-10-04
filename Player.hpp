@@ -35,18 +35,39 @@ Class - Player
 class Player {
 private:
     // Variables
-    vector<Card> hand;
-    bool out;
-    Player* nextPlayer;
+    vector<Card> playingHand;
+    vector<Card> winningHand;
+    bool isOut;
+    int numWins;
+
+    // the following might be extraneous
+    // Player* nextPlayer;
 
 public:
     // Methods
     Player();
-    vector<Card> read_hand() const;
-    bool read_out() const;
-    Player* read_nextPlayer() const;
-    void draw_card(Card);
-    void set_nextPlayer(Player*);
+    
+    // Methods for War
+    Card draw_from_playing_hand() const;
+    void add_to_winning_hand(const vector<Card>&);
+    void move_winning_to_playing();
+    void shuffle_winning_hand();
+
+    // Mutator (setter) methods
+    void increment_wins();
+    void clear_winning_hand();
+    void set_isOut(bool);
+
+    // Accessor (getter) methods
+    vector<Card> read_playing_hand() const;
+    vector<Card> read_winning_hand() const;
+    bool read_isOut() const;
+    int read_numWins() const;
+
+
+    // the following might be extraneous
+    // Player* read_nextPlayer() const;
+    // void set_nextPlayer(Player*);
 };
 
 #endif

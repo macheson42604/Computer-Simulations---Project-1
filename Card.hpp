@@ -38,6 +38,9 @@ Class - Card
                 Returns the charID. This is const because nothing should ever be altered in this function.
             - read_suitID() (char): method
                 Returns the suitID. This is const because nothing should ever be altered in this function.
+            - get_value() (int): method
+                Returns the value of the card, which is used in game comparisons. This is const because nothing should ever be altered in this function.
+                This function translates J, Q, K, A to correct values given the game rules (ex. War: J = 11, Q = 12, K = 13, A = 14)
 */
 class Card {
 private:
@@ -53,6 +56,7 @@ public:
     char read_charID() const;
     char read_suitID() const;
 
+    int get_value() const;
 };
 
 
