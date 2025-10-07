@@ -59,6 +59,7 @@ void setup_war() {
     }
 
     // shuffle deck of cards
+    shuffle_deck(deck*);
 
     // split deck of cards between the two players and set to their playing hands
 
