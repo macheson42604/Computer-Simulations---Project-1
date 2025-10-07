@@ -16,8 +16,9 @@ using namespace std;
 
 
 // Method Declarations
-void game_setup();
-Player* make_player_list();
+void setup_war();
+void play_war();
+vector<Card> make_deck();
 
 
 /**
@@ -133,24 +134,20 @@ void play_war() {
     }
 }
 
+vector<Card> make_deck() {
+    vector<Card> deck;
+    vector<char> suits = {'T', 'J', 'Q', 'K', 'A'};
+    char suitChar = 'E';
 
-
-/*
-// Method Definitions
-void game_setup() {
-    Player* currentPlayer = make_player_list();
+    for (int suit = 0; suit < 4; suit ++) {
+        for (int value = 2; value <= 14; value ++) {    // where 14 is the Ace
+            if (value > 9) {                            // if it is a 10 or face card
+                suitChar = suits[(value % 10)];         // ex: when value = 10, (10 % 10) = 0, therefore 'T' is selected from the suits vector
+            } else {
+                suitChar = (char)value;
+            }
+            
+            deck.push_back(Card(value, suitChar));
+        }
+    }
 }
-
-// Creates a linked list between the two players
-Player* make_player_list() {
-    // Make Both Players
-    Player* firstPlayer = new Player();
-    Player* secondPlayer = new Player();
-
-    // Set nextPlayer to each other
-    firstPlayer->set_nextPlayer(secondPlayer);
-    secondPlayer->set_nextPlayer(firstPlayer);
-
-    return firstPlayer;
-}
-*/

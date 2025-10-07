@@ -17,7 +17,8 @@ Class - Card
                 Ace = 1
             - charID (char): variable
                 The primary identifier of the card itself, utilizing the following shorthand.
-                2-10 = '2-10'
+                2-9 = '2-9'
+                10 = 'T'
                 Jack = 'J'
                 Queen = 'Q'
                 King = 'K'
@@ -51,7 +52,7 @@ private:
 
 public:
     //Methods
-    Card(char, char);
+    Card(int, char);
     short int read_numID() const;
     char read_charID() const;
     char read_suitID() const;

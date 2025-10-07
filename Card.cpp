@@ -4,8 +4,8 @@
 
 using namespace std;
 
-Card::Card(char cID, char sID) {
-    charID = cID;
+Card::Card(int nID, char sID) {
+    numID = nID;
     suitID = sID;
 
     if (isdigit(cID)) {
