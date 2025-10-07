@@ -160,12 +160,16 @@ vector<Card> make_deck() {
 }
 
 void shuffle_deck(vector<Card>& deck) {
-    for (int i = 0; i < deck.size(); i ++) {
+    double r = -1;
+    int p = -1;
 
-    }
-    
-    int i = 0;
-    while (i < deck.size() - 1) {
-
+    for (int c = 0; c < deck.size(); c ++) {
+        r = rand() // CHANGE TO PULL FROM TRACE FILE
+        p = (r * (deck.size() - c)) + c;
+        
+        // Swap Cards
+        Card copyCard = deck[p]; // temporary duplicate card
+        deck[p] = deck[c];
+        deck[c] = copyCard;
     }
 }
