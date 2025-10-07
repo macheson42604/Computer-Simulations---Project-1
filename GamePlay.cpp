@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cctype>
 #include <string>
+#include <cstdlib>
+#include <vector>
 
 #include "Card.hpp"
 #include "Player.hpp"
@@ -19,6 +21,7 @@ using namespace std;
 void setup_war();
 void play_war();
 vector<Card> make_deck();
+void shuffle_deck(vector<Card>&);
 
 
 /**
@@ -40,8 +43,20 @@ void setup_war() {
     Player* player2 = new Player("Player 2");
 
     // make deck of cards
+    vector<Card> deck = make_deck();
 
     // validate deck of cards 
+    bool valid = true;
+    if (deck.size() != 52) { // size check
+        cout << "invalid deck size" << endl;
+        valid = false;
+    }
+
+    if (!valid) { // if invalid deck, display all cards for troubleshooting
+        for (int i = 0; i < deck.size(); i ++) {
+            cout << i << ") " << deck[i].read_charID() << ", " << deck[i].read_suitID() << endl;
+        }
+    }
 
     // shuffle deck of cards
 
@@ -136,18 +151,21 @@ void play_war() {
 
 vector<Card> make_deck() {
     vector<Card> deck;
-    vector<char> suits = {'T', 'J', 'Q', 'K', 'A'};
-    char suitChar = 'E';
-
+    
     for (int suit = 0; suit < 4; suit ++) {
-        for (int value = 2; value <= 14; value ++) {    // where 14 is the Ace
-            if (value > 9) {                            // if it is a 10 or face card
-                suitChar = suits[(value % 10)];         // ex: when value = 10, (10 % 10) = 0, therefore 'T' is selected from the suits vector
-            } else {
-                suitChar = (char)value;
-            }
-            
-            deck.push_back(Card(value, suitChar));
+        for (int value = 2; value <= 14; value ++) { // where 14 is the Ace
+            deck.push_back(Card(value, suit));
         }
+    }
+}
+
+void shuffle_deck(vector<Card>& deck) {
+    for (int i = 0; i < deck.size(); i ++) {
+
+    }
+    
+    int i = 0;
+    while (i < deck.size() - 1) {
+
     }
 }

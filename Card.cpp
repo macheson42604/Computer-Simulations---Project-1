@@ -1,16 +1,25 @@
 #include <bits/stdc++.h>
+#include <vector>
 
 #include "Card.hpp"
 
 using namespace std;
 
-Card::Card(int nID, char sID) {
+Card::Card(int nID, int sID) {
+    // set numID
     numID = nID;
-    suitID = sID;
 
-    if (isdigit(cID)) {
-        numID = (short int)cID;
+    // set charID
+    vector<char> faces = ['T', 'J', 'Q', 'K', 'A']
+    if (nID > 9) {
+        charID = faces[nID % 10];
+    } else {
+        charID = (char)nID;
     }
+
+    // set suitID
+    vector<char> suits = ['D', 'C', 'H', 'S'];
+    suitID = suits[sID];
 }
 
 short int Card::read_numID() const {
