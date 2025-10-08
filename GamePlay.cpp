@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <map>
 
 #include "Card.hpp"
 #include "Player.hpp"
@@ -23,9 +24,13 @@ using namespace std;
  * main(): main function to run both games: War, Trash
  */
 int main() {
+    map<char, int> outputs { {'N', 0}, {'T', 0}, {'L', 0} };
+    
     // running War
     setup_war();
-    play_war();
+    play_war(outputs);
+
+    
 
     // game_setup();
 
