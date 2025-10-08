@@ -22,6 +22,11 @@ Card::Card(int nID, int sID) {
     suitID = suits[sID];
 }
 
+// NOTE: this should only be used to update A from 14 to 1 for the game of Trash
+void Card::set_numID(short int nID) {
+    numID = nID;
+}
+
 short int Card::read_numID() const {
     return numID;
 }

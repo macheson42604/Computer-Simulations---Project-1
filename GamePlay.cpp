@@ -143,14 +143,34 @@ void play_war() {
     }
 }
 
-vector<Card> make_deck() {
-    vector<Card> deck;
-    
-    for (int suit = 0; suit < 4; suit ++) {
-        for (int value = 2; value <= 14; value ++) { // where 14 is the Ace
+vector<Card> make_deck(char gameType) {
+    // create standard deck of 52 cards
+    vector<Card> deck = vector<Card>();
+
+    if (gameType == 'W') {
+        for (int suit = 0; suit < 4; suit ++) {
+        for (int value = 2; value <= 14; value ++) { // where Ace = 14
             deck.push_back(Card(value, suit));
         }
     }
+    }
+    else if (gameType == 'T') {
+        for (int suit = 0; suit < 4; suit ++) {
+            for (int value = 2; value <= 14; value ++) { // where Ace = 1
+                Card card = Card(value, suit);
+                if (value == 14) {
+                    card.set_numID(1);
+                }
+                deck.push_back(card);
+            }
+        }
+    }
+    else {
+        cerr << "Error: invalid game type input to make_deck function" << endl;
+        return vector<Card>();
+    }
+    
+    return deck;
 }
 
 /**
@@ -175,7 +195,7 @@ void shuffle_cards(vector<Card>& cards) {
     }
 }
 
-bool vaildate_deck(vector<Card>& deck) {
+bool validate_deck(vector<Card>& deck, char gameType) {
     bool valid = true;
     if (deck.size() != 52) { // size check
         cerr << "Error: invalid deck size" << endl;
@@ -184,10 +204,10 @@ bool vaildate_deck(vector<Card>& deck) {
 
     // Validation Check: one of each card
     Card invalid = null;
-    vector<char> suits = ['D', 'C', 'H', 'S'];
+    vector<char> suits = {'D', 'C', 'H', 'S'};
     // Run through every possible card value
     for (int suitIndex = 0; suitIndex < 4; suitIndex ++) {
-        for (int value = 2; value < 14; value ++) {
+        for (int value = 2; value <= 14; value ++) {
             int cardCounter = 0;
             
             // Now check each of those possibilities against the cards in our deck
