@@ -13,26 +13,38 @@ Class - Player
     Purpose: To encapsulate all identification needed for an individual player in one centralized class.
     Members
         Private
-            - hand (vector<Card>): variable
-                A list of cards which the player holds.
-            - out (bool): variable
-                The tetermining variable on whether the player has lost the game.
-            - nextPlayer (Player*): variable
-                Utilized to determine the next player in the game. In GamePlayer, this system is setup as a linked list.
-        
+            - playingHand (vector<Card>): variable
+                A list of cards which the player holds and plays from during the game.
+            - winningHand (vector<Card>): variable
+                A list of cards which the player has won during the game, but has not yet shuffled into their playing hand.
+            - numWins (int): variable
+                The number of games the player has won.
+            - isOut (bool): variable
+                The determining variable on whether the player has lost the game.
+
         Public
             - Player(): method
-                All this cunstrucotr currently does is set the out variable to false
-            - read_hand() (vecotor<Card>): method
-                Returns the hand variable. This is const because nothing should ever be altered in this function.
-            - read_nextPlayer() (Player*): method
-                Retruns the nextPlayer variable. This is const because nothing should ever be altered in this function.
-            - draw_card(Card) (void): method
-                Adds one card, which is given through the input, to the hand variable.
-            - set_nextPlayer(Player*) (void): method
-                Used in the GamePlay file, in the make_player_list() method in order to set the linked list. Cannot be done at the creation of the players because a minimum of two Players must already exists in order to set one as the nextPlayer to the other.
-
+                Initialized playingHand and winningHand to empty vectors, isOut to false (because players are just starting to play the game), and numWins to 0.
+            - draw_from_playing_hand() (Card): method
+                Draws the top card from the playing hand and removes it from the playing hand.
+            - add_to_winning_hand(const vector<Card>) (void): method
+                Appends all the cards being added to the current winning hand vector.
+            - move_winning_to_playing() (void): method
+                Moves all cards from the winning hand to the playing hand. First checks that the playing hand is empty, and shuffles the winning hand before moving it to the playing hand.
+            - increment_wins() (void): method
+                Increments the numWins variable by 1.
+            - set_isOut(const bool) (void): method
+                Sets the isOut variable to true.
+            - read_playing_hand() (vector<Card>): method
+                Returns the playingHand variable. This is const because nothing should ever be altered in this function.
+            - read_winning_hand() (vector<Card>): method
+                Returns the winningHand variable. This is const because nothing should ever be altered in this function.
+            - read_isOut() (bool): method
+                Returns the isOut variable. This is const because nothing should ever be altered in this function.
+            - read_numWins() (int): method
+                Returns the numWins variable. This is const because nothing should ever be altered in this function
 */
+
 class Player {
     private:
         // Variables
@@ -49,7 +61,7 @@ class Player {
         
         // Methods for War
         Card draw_from_playing_hand();
-        void add_to_winning_hand(const vector<Card>&);
+        void add_to_winning_hand(const vector<Card>);
         void move_winning_to_playing();
 
         // Mutator (setter) methods
