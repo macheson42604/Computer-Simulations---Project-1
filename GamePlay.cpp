@@ -41,29 +41,7 @@ void setup_war() {
     vector<Card> deck = make_deck();
 
     // validate deck of cards 
-    bool valid = true;
-    if (deck.size() != 52) { // size check
-        cout << "Error: invalid deck size" << endl;
-        valid = false;
-    }
-
-    for (int suit = 0; suit < 4; suit ++) {
-        for (int value = 2; value < 14; value ++) {
-            duplicateCardCounter = 0;
-
-            for (Card card : deck) {
-                if (card.read_numID() == value && card.read_suitID) {
-                    // TO DO
-                }
-            }
-        }
-    }
-
-    if (!valid) { // if invalid deck, display all cards for troubleshooting
-        for (int i = 0; i < deck.size(); i ++) {
-            cout << i << ") " << deck[i].read_charID() << ", " << deck[i].read_suitID() << endl;
-        }
-    }
+    validate_deck(deck*);
 
     // shuffle deck of cards
     shuffle_deck(deck*);
@@ -190,4 +168,40 @@ void shuffle_cards(vector<Card>& cards) {
         cards[p] = cards[c];
         cards[c] = copyCard;
     }
+}
+
+bool vaildate_deck(vector<Card>& deck) {
+    bool valid = true;
+    if (deck.size() != 52) { // size check
+        cout << "Error: invalid deck size" << endl;
+        valid = false;
+    }
+
+    Card invalid = null;
+    vector<char> suits = ['D', 'C', 'H', 'S'];
+    for (int suitIndex = 0; suitIndex < 4; suitIndex ++) {
+        for (int value = 2; value < 14; value ++) {
+            int cardCounter = 0;
+            
+            for (Card card : deck) {
+                if (card.read_numID() == value && card.read_suitID() == suits[suitIndex]) {
+                    cardCounter ++;
+                    invalidCard = card;
+                }
+            }
+
+            if (cardCounter != 1) {
+                cout << "Error: invalid card count - " << card.read_suitID() << card.read_numID() << " has a counter of " << cardCounter << endl;
+                valid = false;
+            }
+        }
+    }
+
+    if (!valid) { // if invalid deck, display all cards for troubleshooting
+        for (int i = 0; i < deck.size(); i ++) {
+            cout << i << ") " << deck[i].read_charID() << ", " << deck[i].read_suitID() << endl;
+        }
+    }
+
+    return valid;
 }

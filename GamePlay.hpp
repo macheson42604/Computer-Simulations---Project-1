@@ -8,6 +8,7 @@ void setup_war();
 void play_war();
 vector<Card> make_deck();
 void shuffle_cards(vector<Card>&);
+bool validate_deck(vector<Card>&);
 
 
 #endif
