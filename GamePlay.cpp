@@ -172,10 +172,8 @@ void shuffle_cards(vector<Card>& cards) {
 
 bool vaildate_deck(vector<Card>& deck) {
     bool valid = true;
-
-    // Validation Check: size of deck
-    if (deck.size() != 52) {
-        cout << "Error: invalid deck size" << endl;
+    if (deck.size() != 52) { // size check
+        cerr << "Error: invalid deck size" << endl;
         valid = false;
     }
 
@@ -195,8 +193,8 @@ bool vaildate_deck(vector<Card>& deck) {
                 }
             }
 
-            if (cardCounter != 1) { // checks both too many and too few
-                cout << "Error: invalid card count - " << card.read_suitID() << card.read_numID() << " has a counter of " << cardCounter << endl;
+            if (cardCounter != 1) {
+                cerr << "Error: invalid card count - " << card.read_suitID() << card.read_numID() << " has a counter of " << cardCounter << endl;
                 valid = false;
             } // if cardCounter
         } // for numID values
