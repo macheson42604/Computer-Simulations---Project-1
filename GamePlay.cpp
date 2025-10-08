@@ -172,30 +172,35 @@ void shuffle_cards(vector<Card>& cards) {
 
 bool vaildate_deck(vector<Card>& deck) {
     bool valid = true;
-    if (deck.size() != 52) { // size check
+
+    // Validation Check: size of deck
+    if (deck.size() != 52) {
         cout << "Error: invalid deck size" << endl;
         valid = false;
     }
 
+    // Validation Check: one of each card
     Card invalid = null;
     vector<char> suits = ['D', 'C', 'H', 'S'];
+    // Run through every possible card value
     for (int suitIndex = 0; suitIndex < 4; suitIndex ++) {
         for (int value = 2; value < 14; value ++) {
             int cardCounter = 0;
             
+            // Now check each of those possibilities against the cards in our deck
             for (Card card : deck) {
-                if (card.read_numID() == value && card.read_suitID() == suits[suitIndex]) {
+                if ( (card.read_numID() == value) && (card.read_suitID() == suits[suitIndex]) ) {
                     cardCounter ++;
                     invalidCard = card;
                 }
             }
 
-            if (cardCounter != 1) {
+            if (cardCounter != 1) { // checks both too many and too few
                 cout << "Error: invalid card count - " << card.read_suitID() << card.read_numID() << " has a counter of " << cardCounter << endl;
                 valid = false;
-            }
-        }
-    }
+            } // if cardCounter
+        } // for numID values
+    } // for suitID values
 
     if (!valid) { // if invalid deck, display all cards for troubleshooting
         for (int i = 0; i < deck.size(); i ++) {
