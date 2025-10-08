@@ -7,6 +7,7 @@
 
 using namespace std;
 
+// TODO: update this comment
 /*
 Class - Player
     Purpose: To encapsulate all identification needed for an individual player in one centralized class.
@@ -33,41 +34,35 @@ Class - Player
 
 */
 class Player {
-private:
-    // Variables
-    vector<Card> playingHand;
-    vector<Card> winningHand;
-    bool isOut;
-    int numWins;
-
-    // the following might be extraneous
-    // Player* nextPlayer;
-
-public:
-    // Methods
-    Player();
-    
-    // Methods for War
-    Card draw_from_playing_hand() const;
-    void add_to_winning_hand(const vector<Card>&);
-    void move_winning_to_playing();
-    void shuffle_winning_hand();
-
-    // Mutator (setter) methods
-    void increment_wins();
-    void clear_winning_hand();
-    void set_isOut(bool);
-
-    // Accessor (getter) methods
-    vector<Card> read_playing_hand() const;
-    vector<Card> read_winning_hand() const;
-    bool read_isOut() const;
-    int read_numWins() const;
+    private:
+        // Variables
+        vector<Card> playingHand;
+        vector<Card> winningHand;
+        bool isOut;
+        int numWins;
 
 
-    // the following might be extraneous
-    // Player* read_nextPlayer() const;
-    // void set_nextPlayer(Player*);
+
+    public:
+        // Methods
+        Player();
+        
+        // Methods for War
+        Card draw_from_playing_hand();
+        void add_to_winning_hand(const vector<Card>&);
+        void move_winning_to_playing(); // TODO should also clear the winning hand
+        void shuffle_winning_hand();
+
+        // Mutator (setter) methods
+        void increment_wins();
+        void set_isOut(const bool);
+
+        // Accessor (getter) methods
+        vector<Card> read_playing_hand() const;
+        vector<Card> read_winning_hand() const;
+        bool read_isOut() const;
+        int read_numWins() const;
+
 };
 
 #endif
