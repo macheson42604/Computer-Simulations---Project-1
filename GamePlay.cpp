@@ -62,6 +62,9 @@ void setup_war() {
     shuffle_deck(deck*);
 
     // split deck of cards between the two players and set to their playing hands
+    player1.add_to_winning_hand(new vector<Card> (deck.begin(), deck.begin() + 26)); // if erroring, initialize function input outside of function call
+    player2.add_to_winning_hand(new vector<Card> (deck.begin() + 26, deck.end()));
+
 
     // Further setup for the War game would go here
 }
@@ -78,7 +81,7 @@ void play_war() {
 
         // compare the cards and determine the winner of the round
         // player 1 wins the round
-        if (card1.get_value() > card2.get_value()) {
+        if (card1.read_numID() > card2.read_numID()) {
             // first add neutral cards to the winner's winning hand
             if (!tiedCards.empty()) {
                 player1->add_to_winning_hand(tiedCards);
@@ -91,7 +94,7 @@ void play_war() {
         }
 
         // player 2 wins the round
-        else if (card2.get_value() > card1.get_value()) {
+        else if (card2.read_numID() > card1.read_numID()) {
              // first add neutral cards to the winner's winning hand
             if (!tiedCards.empty()) {
                 player2->add_to_winning_hand(tiedCards);
@@ -165,6 +168,9 @@ void shuffle_deck(vector<Card>& deck) {
     int p = -1;
 
     for (int c = 0; c < deck.size(); c ++) {
+        // TO DO:
+        // Add trace file
+        // set r to a trace file value
         r = rand() // CHANGE TO PULL FROM TRACE FILE
         p = (r * (deck.size() - c)) + c;
         
