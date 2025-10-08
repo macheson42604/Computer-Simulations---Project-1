@@ -1,12 +1,18 @@
 #include "Player.hpp"
-
+#include "GamePlay.hpp"
+#include <vector>
 using namespace std;
 
 // Constructor
 // initialize playing and winning hands to empty vectors
 // set isOut to false (because they're just starting to play the game)
 // initialize numWins to 0
-
+Player::Player() {
+    playingHand = new vector<Card>();
+    winningHand = new vector<Card>();
+    isOut = false;
+    numWins = 0;
+}
 
 
 // Methods for War
@@ -26,19 +32,20 @@ void add_to_winning_hand(const vector<Card> & addCards) {
 
 void move_winning_to_play() {
     // first check playing hand is empty (give error else)
+    if (!playingHand.empty()) {
+        cerr << "Error: cannot move winning hand to playing hand because playing hand is not empty" << endl;
+        return;
+    }
 
-    // shuffle winning hand helper function 
+    // shuffle winning hand using the shuffle function from GamePlay
+    shuffle_cards(this->winningHand);
 
     // append winning hand vector to the playing hand vector
-
+    playingHand.insert(playingHand.end(), winningHand.begin(), winningHand.end());
 
     // erase all of the cards from the winning hand
+    winningHand.clear();
 }
-
-void shuffle_winning_hand() {
-    // same function as the one in gameplay but specifically for the winning hand as this happens throughout the round
-}
-
 
 // Mutator (setter) methods
 void increment_wins() {
@@ -68,30 +75,3 @@ int Player::read_numWins() const {
     return numWins;
 }
 
-
-// OLD FUNCTIONS
-/*
-Player::Player() {
-    out = false;
-}
-
-vector<Card> Player::read_hand() const {
-    return hand;
-}
-
-bool Player::read_out() const {
-    return out;
-}
-
-Player* Player::read_nextPlayer() const {
-    return nextPlayer;
-}
-
-void Player::draw_card(Card newCard) {
-    hand.push_back(newCard);
-}
-
-void Player::set_nextPlayer(Player* nPlayer) {
-    nextPlayer = nPlayer;
-}
-*/

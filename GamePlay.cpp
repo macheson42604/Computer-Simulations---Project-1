@@ -17,11 +17,6 @@ using namespace std;
 
 
 
-// Method Declarations
-void setup_war();
-void play_war();
-vector<Card> make_deck();
-void shuffle_deck(vector<Card>&);
 
 
 /**
@@ -48,7 +43,7 @@ void setup_war() {
     // validate deck of cards 
     bool valid = true;
     if (deck.size() != 52) { // size check
-        cout << "invalid deck size" << endl;
+        cout << "Error: invalid deck size" << endl;
         valid = false;
     }
 
@@ -175,20 +170,24 @@ vector<Card> make_deck() {
     }
 }
 
-void shuffle_deck(vector<Card>& deck) {
+/**
+ * shuffles deck of cards at beginning of round
+ * War: shuffles winning hand before moving to playing hand 
+ */
+void shuffle_cards(vector<Card>& cards) {
     double r = -1;
     int p = -1;
 
-    for (int c = 0; c < deck.size(); c ++) {
+    for (int c = 0; c < cards.size(); c ++) {
         // TO DO:
         // Add trace file
         // set r to a trace file value
-        r = rand() // CHANGE TO PULL FROM TRACE FILE
-        p = (r * (deck.size() - c)) + c;
+        r = rand(); // CHANGE TO PULL FROM TRACE FILE
+        p = (r * (cards.size() - c)) + c;
         
         // Swap Cards
-        Card copyCard = deck[p]; // temporary duplicate card
-        deck[p] = deck[c];
-        deck[c] = copyCard;
+        Card copyCard = cards[p]; // temporary duplicate card
+        cards[p] = cards[c];
+        cards[c] = copyCard;
     }
 }

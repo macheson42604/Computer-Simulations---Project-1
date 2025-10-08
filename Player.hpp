@@ -50,8 +50,7 @@ class Player {
         // Methods for War
         Card draw_from_playing_hand();
         void add_to_winning_hand(const vector<Card>&);
-        void move_winning_to_playing(); // TODO should also clear the winning hand
-        void shuffle_winning_hand();
+        void move_winning_to_playing();
 
         // Mutator (setter) methods
         void increment_wins();
