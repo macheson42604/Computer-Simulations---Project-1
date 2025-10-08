@@ -52,6 +52,18 @@ void setup_war() {
         valid = false;
     }
 
+    for (int suit = 0; suit < 4; suit ++) {
+        for (int value = 2; value < 14; value ++) {
+            duplicateCardCounter = 0;
+
+            for (Card card : deck) {
+                if (card.read_numID() == value && card.read_suitID) {
+                    // TO DO
+                }
+            }
+        }
+    }
+
     if (!valid) { // if invalid deck, display all cards for troubleshooting
         for (int i = 0; i < deck.size(); i ++) {
             cout << i << ") " << deck[i].read_charID() << ", " << deck[i].read_suitID() << endl;
