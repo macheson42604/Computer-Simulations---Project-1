@@ -73,6 +73,7 @@ class Player {
         vector<Card> read_winning_hand() const;
         bool read_isOut() const;
         int read_numWins() const;
+        int read_num_cards() const;
 
 };
 

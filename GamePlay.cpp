@@ -24,20 +24,15 @@ using namespace std;
  * main(): main function to run both games: War, Trash
  */
 int main() {
+    /*
+    output: map<char, int>
+        N: Number of turns taken
+        T: Number of times the winner has changed
+        L: When the last winning transition occurred
+    */
     map<char, int> outputs { {'N', 0}, {'T', 0}, {'L', 0} };
-    
-    // running War
-    setup_war();
-    play_war(outputs);
 
-    
-
-    // game_setup();
-
-    return 0;
-}
-
-void setup_war() {
+    // STANDARD SETUP
     // make 2 players
     Player* player1 = new Player("Player 1");
     Player* player2 = new Player("Player 2");
@@ -46,11 +41,22 @@ void setup_war() {
     vector<Card> deck = make_deck();
 
     // validate deck of cards 
-    validate_deck(deck*);
+    if (!validate_deck(deck*)) {
+        cerr << "Deck initialized incorrectly" << endl;
+        return 1;
+    };
 
     // shuffle deck of cards
     shuffle_deck(deck*);
 
+    // running War
+    setup_war(player1*, player2*);
+    play_war(outputs*,player1*, player2*);
+
+    return 0;
+}
+
+void setup_war(Player* player1&, Player* player2&) {
     // split deck of cards between the two players and set to their playing hands
     player1.add_to_winning_hand(new vector<Card> (deck.begin(), deck.begin() + 26)); // if erroring, initialize function input outside of function call
     player2.add_to_winning_hand(new vector<Card> (deck.begin() + 26, deck.end()));
@@ -59,12 +65,26 @@ void setup_war() {
     // Further setup for the War game would go here
 }
 
-void play_war() {
+void play_war(map<char, int> outputs&, Player* player1&, Player* player2&) {
     // create empty vector of tied cards
     vector<Card> tiedCards = new vector<Card>();
 
+    winningPlayer = 0
+
     // loop until at least one of the players is out of cards
     while (!player1->read_isOut() && !player2->read_isOut()) {
+        output['N'] ++; // add 1 to turn counter
+        // Determine who is currently winning
+        player1CardCount = player1.read_num_cards();
+        player2CardCount = player2.read_num_card();
+
+        if (player1CardCount > player2CardCount) {
+            if (winingPlayer != 1) {
+                output['T'] ++; // add 1 to  winning transition counter
+                output['L'] = output['N']; // set last transition equal to the curren turn
+            }
+        }
+
         // each player draws the top card from their playing hand
         Card card1 = player1->draw_from_playing_hand();
         Card card2 = player2->draw_from_playing_hand();

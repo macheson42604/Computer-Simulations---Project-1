@@ -104,3 +104,6 @@ int Player::read_numWins() const {
     return numWins;
 }
 
+int read_num_cards() const {
+    return playingHand.size() + winningHand.size();
+}
