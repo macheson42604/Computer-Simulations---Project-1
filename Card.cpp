@@ -10,7 +10,7 @@ Card::Card(int nID, int sID) {
     numID = nID;
 
     // set charID
-    vector<char> faces = ['T', 'J', 'Q', 'K', 'A']
+    vector<char> faces = {'T', 'J', 'Q', 'K', 'A'};
     if (nID > 9) {
         charID = faces[nID % 10];
     } else {
@@ -18,7 +18,7 @@ Card::Card(int nID, int sID) {
     }
 
     // set suitID
-    vector<char> suits = ['D', 'C', 'H', 'S'];
+    vector<char> suits = {'D', 'C', 'H', 'S'};
     suitID = suits[sID];
 }
 

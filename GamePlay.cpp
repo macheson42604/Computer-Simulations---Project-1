@@ -7,6 +7,7 @@
 
 #include "Card.hpp"
 #include "Player.hpp"
+#include "GamePlay.hpp"
 
 using namespace std;
 
@@ -34,54 +35,54 @@ int main() {
 
     // STANDARD SETUP
     // make 2 players
-    Player* player1 = new Player("Player 1");
-    Player* player2 = new Player("Player 2");
+    Player* player1 = new Player();
+    Player* player2 = new Player();
 
     // make deck of cards
-    vector<Card> deck = make_deck();
+    vector<Card> deck = make_deck('W'); // SET TO W FOR TESTING OF WAR
 
     // validate deck of cards 
-    if (!validate_deck(deck*)) {
+    if (!validate_deck(deck)) {
         cerr << "Deck initialized incorrectly" << endl;
         return 1;
     };
 
     // shuffle deck of cards
-    shuffle_deck(deck*);
+    shuffle_cards(deck);
 
     // running War
-    setup_war(player1*, player2*);
-    play_war(outputs*,player1*, player2*);
+    setup_war(player1, player2, deck);
+    play_war(outputs, player1, player2);
 
     return 0;
 }
 
-void setup_war(Player* player1&, Player* player2&) {
+void setup_war(Player*& player1, Player*& player2, vector<Card>& deck) {
     // split deck of cards between the two players and set to their playing hands
-    player1.add_to_winning_hand(new vector<Card> (deck.begin(), deck.begin() + 26)); // if erroring, initialize function input outside of function call
-    player2.add_to_winning_hand(new vector<Card> (deck.begin() + 26, deck.end()));
+    player1->add_to_winning_hand(vector<Card> (deck.begin(), deck.begin() + 26)); // if erroring, initialize function input outside of function call
+    player2->add_to_winning_hand(vector<Card> (deck.begin() + 26, deck.end()));
 
 
     // Further setup for the War game would go here
 }
 
-void play_war(map<char, int> outputs&, Player* player1&, Player* player2&) {
+void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
     // create empty vector of tied cards
-    vector<Card> tiedCards = new vector<Card>();
+    vector<Card> tiedCards = vector<Card>();
 
-    winningPlayer = 0
+    int winningPlayer = 0;
 
     // loop until at least one of the players is out of cards
     while (!player1->read_isOut() && !player2->read_isOut()) {
-        output['N'] ++; // add 1 to turn counter
+        outputs['N'] ++; // add 1 to turn counter
         // Determine who is currently winning
-        player1CardCount = player1.read_num_cards();
-        player2CardCount = player2.read_num_card();
+        int player1CardCount = player1->read_num_cards();
+        int player2CardCount = player2->read_num_cards();
 
         if (player1CardCount > player2CardCount) {
-            if (winingPlayer != 1) {
-                output['T'] ++; // add 1 to  winning transition counter
-                output['L'] = output['N']; // set last transition equal to the curren turn
+            if (winningPlayer != 1) {
+                outputs['T'] ++; // add 1 to  winning transition counter
+                outputs['L'] = outputs['N']; // set last transition equal to the curren turn
             }
         }
 
@@ -126,9 +127,9 @@ void play_war(map<char, int> outputs&, Player* player1&, Player* player2&) {
         // check if either player is out of cards (check both playing and winning hands)
         if (player1->read_playing_hand().empty()) {
             if (!player1->read_winning_hand().empty()) {
-                player1->shuffle_winning_hand();
+                //player1->shuffle_winning_hand();
                 player1->move_winning_to_playing();
-                player1->clear_winning_hand();
+                //player1->clear_winning_hand();
             }
             else {
                 player1->set_isOut(true);
@@ -136,9 +137,9 @@ void play_war(map<char, int> outputs&, Player* player1&, Player* player2&) {
         }
         if (player2->read_playing_hand().empty()) {
             if (!player2->read_winning_hand().empty()) {
-                player2->shuffle_winning_hand();
+                //player2->shuffle_winning_hand();
                 player2->move_winning_to_playing();
-                player2->clear_winning_hand();
+                //player2->clear_winning_hand();
             }
             else {
                 player2->set_isOut(true);
@@ -201,7 +202,7 @@ void shuffle_cards(vector<Card>& cards) {
     double r = -1;
     int p = -1;
 
-    for (int c = 0; c < cards.size(); c ++) {
+    for (int c = 0; c < (int)cards.size(); c ++) {
         // TO DO:
         // Add trace file
         // set r to a trace file value
@@ -215,7 +216,7 @@ void shuffle_cards(vector<Card>& cards) {
     }
 }
 
-bool validate_deck(vector<Card>& deck, char gameType) {
+bool validate_deck(vector<Card>& deck) {
     bool valid = true;
     if (deck.size() != 52) { // size check
         cerr << "Error: invalid deck size" << endl;
@@ -223,30 +224,35 @@ bool validate_deck(vector<Card>& deck, char gameType) {
     }
 
     // Validation Check: one of each card
-    Card invalid = null;
     vector<char> suits = {'D', 'C', 'H', 'S'};
     // Run through every possible card value
     for (int suitIndex = 0; suitIndex < 4; suitIndex ++) {
         for (int value = 2; value <= 14; value ++) {
             int cardCounter = 0;
+            Card invalidCard = deck[0];
             
             // Now check each of those possibilities against the cards in our deck
             for (Card card : deck) {
-                if ( (card.read_numID() == value) && (card.read_suitID() == suits[suitIndex]) ) {
+                if (value == 14) { // this if statement checks for 1 or 14 to account for the differing Ace values
+                    if ( ((card.read_numID() == 14) || card.read_numID() == 1) && (card.read_suitID() == suits[suitIndex]) ) {
+                        cardCounter ++;
+                        invalidCard = card;
+                    }
+                } else if ( (card.read_numID() == value) && (card.read_suitID() == suits[suitIndex]) ) { // all other cards besides Ace
                     cardCounter ++;
                     invalidCard = card;
                 }
             }
 
             if (cardCounter != 1) {
-                cerr << "Error: invalid card count - " << card.read_suitID() << card.read_numID() << " has a counter of " << cardCounter << endl;
+                cerr << "Error: invalid card count - " << invalidCard.read_suitID() << invalidCard.read_numID() << " has a counter of " << cardCounter << endl;
                 valid = false;
             } // if cardCounter
         } // for numID values
     } // for suitID values
 
     if (!valid) { // if invalid deck, display all cards for troubleshooting
-        for (int i = 0; i < deck.size(); i ++) {
+        for (int i = 0; i < (int)deck.size(); i ++) {
             cout << i << ") " << deck[i].read_charID() << ", " << deck[i].read_suitID() << endl;
         }
     }
