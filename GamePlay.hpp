@@ -1,6 +1,8 @@
 #ifndef GAMEPLAY_HPP
 #define GAMEPLAY_HPP
 
+#include <map>
+
 // Creating the hpp file for GamePlay in order to utilize function declarations in other files
 
 // Method Declarations

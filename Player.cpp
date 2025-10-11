@@ -1,6 +1,10 @@
+#include <vector>
+#include <iostream>
+
 #include "Player.hpp"
 #include "GamePlay.hpp"
-#include <vector>
+#include "Card.hpp"
+
 using namespace std;
 
 // Constructor
@@ -8,44 +12,38 @@ using namespace std;
 // set isOut to false (because they're just starting to play the game)
 // initialize numWins to 0
 Player::Player() {
-    playingHand = vector<Card>();
-    winningHand = vector<Card>();
+    //playingHand = vector<Card>();
+    //winningHand = vector<Card>();
     isOut = false;
     numWins = 0;
 }
 
-// Destructor
-Player::~Player() {
-    delete playingHand;
-    delete winningHand;
-}
-
 // Methods for War
-Card draw_from_playing_hand() {
+Card Player::draw_from_playing_hand() {
     // draw top card from the playing hand
     if (playingHand.empty()) {
         cerr << "Error: cannot draw from playing hand because it is empty" << endl;
-        return Card(); 
+        return Card(-1, -1); 
     }
 
     // top of the deck will be considered the last card in the vector (thus pop_back is acceptable)
     Card topCard = playingHand.back();
     // remove top card from playing hand because we we'll be playing this card
-    playHand.pop_back();
+    playingHand.pop_back();
     return topCard;
 }
 
-void add_to_winning_hand(const vector<Card> & addCards) {
+void Player::add_to_winning_hand(const vector<Card>*& addCards) {
     if (addCards.empty()) {
         cerr << "Error: cannot add to winning hand because the input vector is empty" << endl;
         return;
     }
 
     // append all the cards being added to the current winning hand vector
-    winningHand.insert(winningHand.end(), addCards.begin(), addCard.end());
+    winningHand.insert(winningHand.end(), addCards.begin(), addCards.end());
 }
 
-void move_winning_to_play() {
+void Player::move_winning_to_playing() {
     // first check playing hand is empty (give error else)
     if (!playingHand.empty()) {
         cerr << "Error: cannot move winning hand to playing hand because playing hand is not empty" << endl;
@@ -73,26 +71,26 @@ void move_winning_to_play() {
 }
 
 // Mutator (setter) methods
-void increment_wins() {
+void Player::increment_wins() {
     numWins++;
 }
 
-void set_isOut(const bool) {
+void Player::set_isOut(const bool) {
     isOut = true;
 }
 
 
 
 // Accessor (getter) methods
-vector<Card> read_playing_hand() const {
+vector<Card> Player::read_playing_hand() const {
     return playingHand;
 }
 
-vector<Card> read_winning_head() const {
+vector<Card> Player::read_winning_hand() const {
     return winningHand;
 }
 
-bool read_isOut() const {
+bool Player::read_isOut() const {
     return isOut;
 }
 
@@ -104,6 +102,6 @@ int Player::read_numWins() const {
     return numWins;
 }
 
-int read_num_cards() const {
+int Player::read_num_cards() const {
     return playingHand.size() + winningHand.size();
 }
