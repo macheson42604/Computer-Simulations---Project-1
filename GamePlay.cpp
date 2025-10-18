@@ -95,7 +95,8 @@ int main(int argc, char* argv[]) {
     }
    
     // output results
-    cout << "OUTPUT " << gameType << " turns " << outputs['N'] << " transitions " << outputs['T'] << " last " << outputs['L']/outputs['N'] << endl;
+    cout << "OUTPUT " << gameType << " turns " << outputs['N'] << " transitions " << outputs['T'] << " last " << outputs['L']/(double)outputs['N'] << endl;
+
     return 0;
 }
 
