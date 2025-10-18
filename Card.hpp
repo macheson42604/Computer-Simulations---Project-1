@@ -48,6 +48,7 @@ private:
     short int numID;
     char charID;
     char suitID;
+    bool isShowing;
 
 public:
     //Methods
@@ -56,6 +57,7 @@ public:
     short int read_numID() const;
     char read_charID() const;
     char read_suitID() const;
+    bool read_isShowing() const;
 };
 
 

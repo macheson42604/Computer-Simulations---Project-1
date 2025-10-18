@@ -16,6 +16,7 @@ Player::Player() {
     //winningHand = vector<Card>();
     isOut = false;
     numWins = 0;
+    handSize = 10;
 }
 
 // Methods for War

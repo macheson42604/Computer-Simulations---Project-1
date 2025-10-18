@@ -20,6 +20,8 @@ Card::Card(int nID, int sID) {
     // set suitID
     vector<char> suits = {'D', 'C', 'H', 'S'};
     suitID = suits[sID];
+
+    isShowing = false;
 }
 
 // NOTE: this should only be used to update A from 14 to 1 for the game of Trash
