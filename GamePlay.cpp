@@ -207,11 +207,33 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
     // vector<Card> allCards;
     // allCards.validate_deck();
     
-    // if both players are out (tie game - aka all 52 cards somehow are in the tiedCards deck), no player earns a point
+    // if both players are out (tie game - aka all 52 cards somehow are in the tiedCards deck), randomly choose a winning player
+    if (player1->read_isOut() && player2->read_isOut()) {
+        if (traceValues.empty()) {
+            cerr << "Error: not enough trace values for shuffling" << endl;
+            exit(1);
+        }
+
+        // use trace values for randomness
+        r = traceValues[0];
+        // remove used trace value
+        traceValues.erase(traceValues.begin());
+
+        if (r > 0.5) {
+            player1->increment_wins();
+        } else {
+            player2->increment_wins();
+        }
+
+        // VALIDATION CHECK - all cards should now be in tied pile
+        validate_deck(tiedCards);
+    }
+
     // player 2 is out, player 1 is not
-    if (!player1->read_isOut() && player2->read_isOut()) {
+    else if (!player1->read_isOut() && player2->read_isOut()) {
         player1->increment_wins();
 
+        // VALIDATION CHECK - all cards should now be in player 1's hand
         vector<Card> p1Hand = player1->read_playing_hand();
         vector<Card> p1WHand = player1->read_winning_hand();
 
@@ -223,6 +245,7 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
     else if (player1->read_isOut() && !player2->read_isOut()) {
         player2->increment_wins();
 
+        // VALIDATION CHECK - all cards should now be in player 2's hand
         vector<Card> p2Hand = player2->read_playing_hand();
         vector<Card> p2WHand = player2->read_winning_hand();
 
