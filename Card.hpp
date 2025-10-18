@@ -14,10 +14,11 @@ Class - Card
                 Jack = 11
                 Queen = 12
                 King = 13
-                Ace = 1
+                Ace = 14
             - charID (char): variable
                 The primary identifier of the card itself, utilizing the following shorthand.
-                2-10 = '2-10'
+                2-9 = '2-9'
+                10 = 'T'
                 Jack = 'J'
                 Queen = 'Q'
                 King = 'K'
@@ -32,6 +33,8 @@ Class - Card
         Public
             - Card(char, char): method
                 The inputs of this method correlate respectively and directly to charId and suitID. This then automatically deduces the numId based on the input charId.
+            - set_numID(short int) (void): method
+                Sets the numID. This should only be used to update A from 14 to 1 for the game of Trash.
             - read_numID() (short int): method
                 Returns the numID. This is const because nothing should ever be altered in this function.
             - read_charID() (char): method
@@ -48,11 +51,11 @@ private:
 
 public:
     //Methods
-    Card(char, char);
+    Card(int, int);
+    void set_numID(short int nID);
     short int read_numID() const;
     char read_charID() const;
     char read_suitID() const;
-
 };
 
 
