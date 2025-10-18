@@ -52,6 +52,7 @@ class Player {
         vector<Card> winningHand;
         bool isOut;
         int numWins;
+        int handSize;
 
     public:
         // Methods
@@ -61,6 +62,11 @@ class Player {
         Card draw_from_playing_hand();
         void add_to_winning_hand(const vector<Card>);
         void move_winning_to_playing();
+
+        // Methods for Trash
+        void take_turn(vector<Card>&, vector<Card>&);
+        bool check_showing();
+        Card swap_card(Card);
 
         // Mutator (setter) methods
         void increment_wins();
@@ -72,6 +78,7 @@ class Player {
         bool read_isOut() const;
         int read_numWins() const;
         int read_num_cards() const;
+        int read_handSize() const;
 
 };
 

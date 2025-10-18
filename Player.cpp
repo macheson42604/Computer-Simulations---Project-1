@@ -70,6 +70,19 @@ void Player::move_winning_to_playing() {
     }
 }
 
+// Methods for Trash
+void Player::take_turn(vector<Card>&, vector<Card>&) {
+
+}
+
+bool Player::check_showing() {
+
+}
+
+Card Player::swap_card(Card) {
+
+}
+
 // Mutator (setter) methods
 void Player::increment_wins() {
     numWins++;
@@ -104,4 +117,8 @@ int Player::read_numWins() const {
 
 int Player::read_num_cards() const {
     return playingHand.size() + winningHand.size();
+}
+
+int Player::read_handSize() const {
+    return handSize;
 }
