@@ -59,7 +59,7 @@ class Player {
         
         // Methods for War
         Card draw_from_playing_hand();
-        void add_to_winning_hand(const vector<Card>*&);
+        void add_to_winning_hand(const vector<Card>);
         void move_winning_to_playing();
 
         // Mutator (setter) methods

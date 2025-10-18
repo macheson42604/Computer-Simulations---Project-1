@@ -106,6 +106,9 @@ void setup_war(Player*& player1, Player*& player2, vector<Card>& deck) {
     player1->add_to_winning_hand(deck1); // if erroring, initialize function input outside of function call
     player2->add_to_winning_hand(deck2);
 
+    player1->move_winning_to_playing();
+    player2->move_winning_to_playing();
+
 
     // Further setup for the War game would go here
 }
