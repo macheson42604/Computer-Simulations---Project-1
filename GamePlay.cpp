@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include <map>
+#include <fstream>
 
 #include "Card.hpp"
 #include "Player.hpp"
@@ -18,10 +19,41 @@ using namespace std;
  */
 
 
+ // global trace values
+ vector<double> traceValues;
+
 /**
  * main(): main function to run both games: War, Trash
  */
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        cerr << "Error: invalid number of arguments. Usage: ./SIM <game type> <trace file>" << endl;
+        return 1;
+    }
+
+    // gameType (war, trash): determine which game to play
+    string gameType = argv[1];
+    // traceFile: file containing random numbers for shuffling
+    string traceFile = argv[2];
+
+    char gameTypeChar = toupper(gameType[0]);
+    if (gameTypeChar != 'W' && gameTypeChar != 'T') {
+        cerr << "Error: invalid game type. Valid types are 'War' or 'Trash'" << endl;
+        return 1;
+    }
+
+    // same trace files for both games into arraylist of doubles
+    ifstream traceFileStream(traceFile);
+    if (!traceFileStream.is_open()) {
+        cerr << "Error: could not open trace file" << endl;
+        return 1;
+    }
+    double value;
+
+    while (traceFileStream >> value) {
+        traceValues.push_back(value);
+    }
+
     /*
     output: map<char, int>
         N: Number of turns taken
@@ -36,7 +68,7 @@ int main() {
     Player* player2 = new Player();
 
     // make deck of cards
-    vector<Card> deck = make_deck('W'); // SET TO W FOR TESTING OF WAR
+    vector<Card> deck = make_deck(gameTypeChar);
 
     // validate deck of cards 
     if (!validate_deck(deck)) {
@@ -45,12 +77,23 @@ int main() {
     };
 
     // shuffle deck of cards
+    // return error if not enough trace values
+    if (traceValues.size() < deck.size()) {
+        cerr << "Error: not enough trace values for shuffling" << endl;
+        return 1;
+    }
     shuffle_cards(deck);
 
-    // running War
-    setup_war(player1, player2, deck);
-    play_war(outputs, player1, player2);
-
+    // running Trash
+    if (gameTypeChar == 'T') {
+        return 0; // TODO: implement Trash
+    }
+    else if (gameTypeChar == 'W') {
+         // running War
+        setup_war(player1, player2, deck);
+        play_war(outputs, player1, player2);
+    }
+   
     return 0;
 }
 
@@ -204,10 +247,16 @@ void shuffle_cards(vector<Card>& cards) {
     int p = -1;
 
     for (int c = 0; c < (int)cards.size(); c ++) {
-        // TO DO:
-        // Add trace file
-        // set r to a trace file value
-        r = rand(); // CHANGE TO PULL FROM TRACE FILE
+        // if trace values run out, return error
+        if (traceValues.empty()) {
+            cerr << "Error: not enough trace values for shuffling" << endl;
+            exit(1);
+        }
+
+        // use trace values for randomness
+        r = traceValues[0];
+        // remove used trace value
+        traceValues.erase(traceValues.begin());
         p = (r * (cards.size() - c)) + c;
         
         // Swap Cards

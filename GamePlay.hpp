@@ -2,6 +2,9 @@
 #define GAMEPLAY_HPP
 
 #include <map>
+#include <vector>
+#include "Card.hpp"
+#include "Player.hpp"
 
 // Creating the hpp file for GamePlay in order to utilize function declarations in other files
 

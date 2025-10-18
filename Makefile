@@ -6,10 +6,10 @@ CXX = g++
 CXXFLAGS = -Wall -g
 
 # Target executable
-TARGET = game-sim
+TARGET = SIM
 
 # For deleting the target
-TARGET_DEL = game-sim.exe
+# TARGET_DEL = SIM.exe
 
 # Source files
 SRCS = GamePlay.cpp Card.cpp Player.cpp
@@ -18,7 +18,8 @@ SRCS = GamePlay.cpp Card.cpp Player.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default rule to build and run the executable
-all: $(TARGET) run
+all: $(TARGET)
+# all: $(TARGET) run
 
 # Rule to link object files into the target executable
 $(TARGET): $(OBJS)
@@ -34,4 +35,10 @@ run: $(TARGET)
 
 # Clean rule to remove generated files
 clean:
-	del $(TARGET_DEL) $(OBJS)
+	rm -f $(TARGET) $(OBJS)
+
+
+# Dependencies
+GamePlay.o: GamePlay.cpp GamePlay.hpp Player.hpp Card.hpp
+Player.o: Player.cpp Player.hpp Card.hpp
+Card.o: Card.cpp Card.hpp
