@@ -206,15 +206,29 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
     // correct number and suits of cards
     // vector<Card> allCards;
     // allCards.validate_deck();
-
+    
     // if both players are out (tie game - aka all 52 cards somehow are in the tiedCards deck), no player earns a point
     // player 2 is out, player 1 is not
     if (!player1->read_isOut() && player2->read_isOut()) {
         player1->increment_wins();
+
+        vector<Card> p1Hand = player1->read_playing_hand();
+        vector<Card> p1WHand = player1->read_winning_hand();
+
+        p1Hand.insert(p1Hand.end(), p1WHand.begin(), p1WHand.end());
+
+        validate_deck(p1Hand);
     }
     // player 1 is out, player 2 is not
     else if (player1->read_isOut() && !player2->read_isOut()) {
         player2->increment_wins();
+
+        vector<Card> p2Hand = player2->read_playing_hand();
+        vector<Card> p2WHand = player2->read_winning_hand();
+
+        p2Hand.insert(p2Hand.end(), p2WHand.begin(), p2WHand.end());
+
+        validate_deck(p2Hand);
     }
 }
 
