@@ -33,7 +33,7 @@ Card Player::draw_from_playing_hand() {
     return topCard;
 }
 
-void Player::add_to_winning_hand(const vector<Card>*& addCards) {
+void Player::add_to_winning_hand(const vector<Card> addCards) {
     if (addCards.empty()) {
         cerr << "Error: cannot add to winning hand because the input vector is empty" << endl;
         return;

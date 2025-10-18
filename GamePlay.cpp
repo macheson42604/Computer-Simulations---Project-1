@@ -18,9 +18,6 @@ using namespace std;
  */
 
 
-
-
-
 /**
  * main(): main function to run both games: War, Trash
  */
@@ -59,8 +56,8 @@ int main() {
 
 void setup_war(Player*& player1, Player*& player2, vector<Card>& deck) {
     // split deck of cards between the two players and set to their playing hands
-    vector<Card>* deck1 = new vector<Card>(deck.begin(), deck.begin() + 26);
-    vector<Card>* deck2 = new vector<Card>(deck.begin() + 26, deck.end());
+    vector<Card> deck1(deck.begin(), deck.begin() + 26);
+    vector<Card> deck2(deck.begin() + 26, deck.end());
 
 
     player1->add_to_winning_hand(deck1); // if erroring, initialize function input outside of function call
