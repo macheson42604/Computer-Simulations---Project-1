@@ -136,6 +136,7 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
         // each player draws the top card from their playing hand
         Card card1 = player1->draw_from_playing_hand();
         Card card2 = player2->draw_from_playing_hand();
+        cout << "Player 1 Shows " << card1.read_charID() << "; Player 2 Shows " << card2.read_charID();
 
         // compare the cards and determine the winner of the round
         // player 1 wins the round
@@ -149,6 +150,8 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add the winning cards to the winner's winning hand
             // add player 1's card first, then player 2's card
             player1->add_to_winning_hand({card1, card2});
+
+            cout << "; Player 1 Wins!" << endl;
         }
 
         // player 2 wins the round
@@ -162,6 +165,8 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add the winning cards to the winner's winning hand
             // add player 2's card first, then player 1's card
             player2->add_to_winning_hand({card2, card1});
+
+            cout << "; Player 2 Wins!" << endl;
         }
 
         // players tie the round
@@ -169,6 +174,8 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add both cards to the tiedCards vector (order doesn't matter)
             tiedCards.push_back(card1);
             tiedCards.push_back(card2);
+
+            cout << "; TIE!" << endl;
         }
 
         // check if either player is out of cards (check both playing and winning hands)

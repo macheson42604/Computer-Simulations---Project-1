@@ -14,7 +14,7 @@ Card::Card(int nID, int sID) {
     if (nID > 9) {
         charID = faces[nID % 10];
     } else {
-        charID = (char)nID;
+        charID = numID + '0';
     }
 
     // set suitID
