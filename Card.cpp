@@ -29,6 +29,11 @@ void Card::set_numID(short int nID) {
     numID = nID;
 }
 
+void Card::showCard() {
+    isShowing = true;
+}
+
+// Getter methods
 short int Card::read_numID() const {
     return numID;
 }
@@ -39,4 +44,8 @@ char Card::read_charID() const {
 
 char Card::read_suitID() const {
     return suitID;
+}
+
+bool Card::read_isShowing() const {
+    return isShowing;
 }

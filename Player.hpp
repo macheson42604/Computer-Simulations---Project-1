@@ -64,9 +64,10 @@ class Player {
         void move_winning_to_playing();
 
         // Methods for Trash
-        void take_turn(vector<Card>&, vector<Card>&);
+        void take_turn(vector<Card>&, vector<double>&);
         bool check_showing();
-        Card swap_card(Card);
+        void swap_card(Card&, int);
+        void decrement_handSize();
 
         // Mutator (setter) methods
         void increment_wins();

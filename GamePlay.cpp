@@ -251,6 +251,43 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
     }
 }
 
+void setup_trash(Player*& player1, Player*& player2, vector<Card>& deck) {
+   // TODO
+   // make sure the players' hands are empty before dealing new cards
+   // make sure to reset isShowing for all cards to false
+}
+
+void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vector<Card>& deck) {
+    while (player1->read_handSize() > 0 && player2->read_handSize() > 0) {
+        setup_trash(player1, player2, deck);
+
+        while (!player1->check_showing() && !player2->check_showing()) {
+            player1->take_turn(deck, traceValues);
+            if (player1->check_showing()) { break; }
+            player2->take_turn(deck, traceValues);
+        }
+
+        // determine winner of round
+        if (player1->check_showing() && !player2->check_showing()) {
+            player1->decrement_handSize();
+            player1->increment_wins();
+        }
+        else if (!player1->check_showing() && player2->check_showing()) {
+            player2->decrement_handSize();
+            player2->increment_wins();
+        }
+        else {
+            cerr << "Error: both players have all cards showing - invalid state" << endl;
+            exit(1);
+        }
+
+        // update outputs
+        // TODO: complete (maybe make a function for both Trash & War)
+    }
+
+}
+
+
 vector<Card> make_deck(char gameType) {
     // create standard deck of 52 cards
     vector<Card> deck = vector<Card>();

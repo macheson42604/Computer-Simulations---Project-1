@@ -72,21 +72,39 @@ void Player::move_winning_to_playing() {
 }
 
 // Methods for Trash
-void Player::take_turn(vector<Card>&, vector<Card>&) {
+void Player::take_turn(vector<Card>&, vector<double>&) {
 
 }
 
 bool Player::check_showing() {
-
+    for (const Card& card : playingHand) {
+        if (card.read_isShowing() == false) {
+            return false;
+        }
+    }
+    return true;
 }
 
-Card Player::swap_card(Card) {
+void Player::swap_card(Card& currCard, int index) {
+    if (index < 0 || index >= (int)playingHand.size()) {
+        cerr << "Error: invalid index for swapping card" << endl;
+        return;
+    }
+
+    Card tempCard = playingHand[index];
+    playingHand[index] = currCard;
+    playingHand[index].showCard();
+    currCard = tempCard;
 
 }
 
 // Mutator (setter) methods
 void Player::increment_wins() {
     numWins++;
+}
+
+void Player::decrement_handSize() {
+    handSize--;
 }
 
 void Player::set_isOut(const bool) {
