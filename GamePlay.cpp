@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     output: map<char, int>
         N: Number of turns taken
         T: Number of times the winner has changed
-        L: When the last winning transition occurred
+        L: NUMBER when the last winning transition occurred (this needs to be divided by N in the final output)
     */
     map<char, int> outputs { {'N', 0}, {'T', 0}, {'L', 0} };
 
@@ -94,6 +94,8 @@ int main(int argc, char* argv[]) {
         play_war(outputs, player1, player2);
     }
    
+    // output results
+    cout << "OUTPUT " << gameType << " turns " << outputs['N'] << " transitions " << outputs['T'] << " last " << outputs['L']/outputs['N'] << endl;
     return 0;
 }
 
@@ -121,22 +123,9 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
 
     // loop until at least one of the players is out of cards
     while (!player1->read_isOut() && !player2->read_isOut()) {
-        outputs['N'] ++; // add 1 to turn counter
-        // Determine who is currently winning
-        int player1CardCount = player1->read_num_cards();
-        int player2CardCount = player2->read_num_cards();
-
-        if (player1CardCount > player2CardCount) {
-            if (winningPlayer != 1) {
-                outputs['T'] ++; // add 1 to  winning transition counter
-                outputs['L'] = outputs['N']; // set last transition equal to the curren turn
-            }
-        }
-
         // each player draws the top card from their playing hand
         Card card1 = player1->draw_from_playing_hand();
         Card card2 = player2->draw_from_playing_hand();
-        cout << "Player 1 Shows " << card1.read_charID() << "; Player 2 Shows " << card2.read_charID();
 
         // compare the cards and determine the winner of the round
         // player 1 wins the round
@@ -150,8 +139,6 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add the winning cards to the winner's winning hand
             // add player 1's card first, then player 2's card
             player1->add_to_winning_hand({card1, card2});
-
-            cout << "; Player 1 Wins!" << endl;
         }
 
         // player 2 wins the round
@@ -165,8 +152,6 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add the winning cards to the winner's winning hand
             // add player 2's card first, then player 1's card
             player2->add_to_winning_hand({card2, card1});
-
-            cout << "; Player 2 Wins!" << endl;
         }
 
         // players tie the round
@@ -174,8 +159,6 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add both cards to the tiedCards vector (order doesn't matter)
             tiedCards.push_back(card1);
             tiedCards.push_back(card2);
-
-            cout << "; TIE!" << endl;
         }
 
         // check if either player is out of cards (check both playing and winning hands)
@@ -199,14 +182,26 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
                 player2->set_isOut(true);
             }
         }
+
+        // update outputs
+        outputs['N'] ++; // add 1 to turn counter
+        // Determine who is currently winning
+        int player1CardCount = player1->read_num_cards();
+        int player2CardCount = player2->read_num_cards();
+
+        if (player1CardCount > player2CardCount && winningPlayer != 1) {
+            outputs['T'] ++; // add 1 to  winning transition counter
+            outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+            winningPlayer = 1;
+        }
+        else if (player2CardCount > player1CardCount && winningPlayer != 2) {
+            outputs['T'] ++; // add 1 to  winning transition counter
+            outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+            winningPlayer = 2;
+        }
     }
 
-    // TODO
-    // validate deck of cards (should be all 52 cards accounted for between both players' playing and winning hands, and the tiedCards vector)
-    // correct number and suits of cards
-    // vector<Card> allCards;
-    // allCards.validate_deck();
-    
+
     // if both players are out (tie game - aka all 52 cards somehow are in the tiedCards deck), randomly choose a winning player
     if (player1->read_isOut() && player2->read_isOut()) {
         if (traceValues.empty()) {
@@ -215,7 +210,7 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
         }
 
         // use trace values for randomness
-        r = traceValues[0];
+        double r = traceValues[0];
         // remove used trace value
         traceValues.erase(traceValues.begin());
 
@@ -347,12 +342,6 @@ bool validate_deck(vector<Card>& deck) {
             } // if cardCounter
         } // for numID values
     } // for suitID values
-
-    if (!valid) { // if invalid deck, display all cards for troubleshooting
-        for (int i = 0; i < (int)deck.size(); i ++) {
-            cout << i << ") " << deck[i].read_charID() << ", " << deck[i].read_suitID() << endl;
-        }
-    }
 
     return valid;
 }
