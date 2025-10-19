@@ -54,6 +54,7 @@ public:
     //Methods
     Card(int, int);
     void set_numID(short int nID);
+    void set_not_showing();
     void showCard();
     short int read_numID() const;
     char read_charID() const;

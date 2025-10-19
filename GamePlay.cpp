@@ -255,16 +255,30 @@ void setup_trash(Player*& player1, Player*& player2, vector<Card>& deck) {
    // TODO
    // make sure the players' hands are empty before dealing new cards
    // make sure to reset isShowing for all cards to false
+    for (Card card : deck) {
+        card.set_not_showing();
+    }
+    
+    vector<Card> deck1(deck.begin(), deck.begin() + player1->read_handSize());
+    vector<Card> deck2(deck.begin() + deck1.size(), deck.begin() + deck1.size() + player2->read_handSize());
+
+    deck = vector<Card> (deck.begin() + deck1.szie() + deck2.size(), deck.end());
+
+    player1->add_to_winning_hand(deck1); // if erroring, initialize function input outside of function call
+    player2->add_to_winning_hand(deck2);
 }
 
 void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vector<Card>& deck) {
+    vector<Card> discardPile;
     while (player1->read_handSize() > 0 && player2->read_handSize() > 0) {
         setup_trash(player1, player2, deck);
 
         while (!player1->check_showing() && !player2->check_showing()) {
-            player1->take_turn(deck, traceValues);
-            if (player1->check_showing()) { break; }
-            player2->take_turn(deck, traceValues);
+            player1->take_turn(deck, discardPile, traceValues);
+            if (player1->check_showing()) {
+                break;
+            }
+            player2->take_turn(deck, discardPile, traceValues);
         }
 
         // determine winner of round
@@ -280,6 +294,8 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
             cerr << "Error: both players have all cards showing - invalid state" << endl;
             exit(1);
         }
+
+        shuffle(deck);
 
         // update outputs
         // TODO: complete (maybe make a function for both Trash & War)

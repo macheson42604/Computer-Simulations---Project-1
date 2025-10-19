@@ -29,6 +29,10 @@ void Card::set_numID(short int nID) {
     numID = nID;
 }
 
+void Card::set_not_showing() {
+    isShowing = false;
+}
+
 void Card::showCard() {
     isShowing = true;
 }

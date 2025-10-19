@@ -72,8 +72,39 @@ void Player::move_winning_to_playing() {
 }
 
 // Methods for Trash
-void Player::take_turn(vector<Card>&, vector<double>&) {
+void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector<double>& traceValues) {
+    Card curCard(-1, -1);
 
+    if (discardPile.size() > 0) {
+        if (check_need(discardPile[0])) {
+            curCard = discardPile[0];
+            discardPile.erase(discardPile.begin());
+        }
+
+    } else {
+        curCard = drawPile[0];
+        drawPile.erase(drawPrile.begin());
+    }
+
+    while (check_need(curCard)) {
+        int index = curCard.read_numID() - 1; // add case for a jack later
+        swap_card(curCard, index);
+    }
+
+    discardPile.insert(discardPile.begin(), curCard);
+    
+}
+
+bool Player::check_need(Card& card) {
+    if (card.read_numID() < winningHand.size()) { // if the card value is within the range of the winningHand size
+        for (Card card : winningHand) { // check each card
+            if (winningHand[card.read_numID() - 1].read_isShowing()) { // if our index for that card isn't showing
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 bool Player::check_showing() {
@@ -85,17 +116,16 @@ bool Player::check_showing() {
     return true;
 }
 
-void Player::swap_card(Card& currCard, int index) {
+void Player::swap_card(Card& curCard, int index) {
     if (index < 0 || index >= (int)playingHand.size()) {
         cerr << "Error: invalid index for swapping card" << endl;
         return;
     }
 
     Card tempCard = playingHand[index];
-    playingHand[index] = currCard;
+    playingHand[index] = curCard;
     playingHand[index].showCard();
-    currCard = tempCard;
-
+    curCard = tempCard;
 }
 
 // Mutator (setter) methods

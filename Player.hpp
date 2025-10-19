@@ -53,6 +53,7 @@ class Player {
         bool isOut;
         int numWins;
         int handSize;
+        int jackAlgorithmCounter[13];
 
     public:
         // Methods
@@ -64,7 +65,8 @@ class Player {
         void move_winning_to_playing();
 
         // Methods for Trash
-        void take_turn(vector<Card>&, vector<double>&);
+        void take_turn(vector<Card>&, vector<Card>&, vector<double>&);
+        bool check_need(Card&);
         bool check_showing();
         void swap_card(Card&, int);
         void decrement_handSize();
@@ -72,7 +74,7 @@ class Player {
         // Mutator (setter) methods
         void increment_wins();
         void set_isOut(const bool);
-
+        
         // Accessor (getter) methods
         vector<Card> read_playing_hand() const;
         vector<Card> read_winning_hand() const;
@@ -80,7 +82,6 @@ class Player {
         int read_numWins() const;
         int read_num_cards() const;
         int read_handSize() const;
-
 };
 
 #endif
