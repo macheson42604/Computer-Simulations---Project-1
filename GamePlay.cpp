@@ -105,8 +105,8 @@ void setup_war(Player*& player1, Player*& player2, vector<Card>& deck) {
     vector<Card> deck1(deck.begin(), deck.begin() + 26);
     vector<Card> deck2(deck.begin() + 26, deck.end());
 
-
-    player1->add_to_winning_hand(deck1); // if erroring, initialize function input outside of function call
+    // if erroring, initialize function input outside of function call
+    player1->add_to_winning_hand(deck1); 
     player2->add_to_winning_hand(deck2);
 
     player1->move_winning_to_playing();
@@ -262,7 +262,7 @@ void setup_trash(Player*& player1, Player*& player2, vector<Card>& deck) {
     vector<Card> deck1(deck.begin(), deck.begin() + player1->read_handSize());
     vector<Card> deck2(deck.begin() + deck1.size(), deck.begin() + deck1.size() + player2->read_handSize());
 
-    deck = vector<Card> (deck.begin() + deck1.szie() + deck2.size(), deck.end());
+    deck = vector<Card> (deck.begin() + deck1.size() + deck2.size(), deck.end());
 
     player1->add_to_winning_hand(deck1); // if erroring, initialize function input outside of function call
     player2->add_to_winning_hand(deck2);
@@ -295,7 +295,7 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
             exit(1);
         }
 
-        shuffle(deck);
+        shuffle_cards(deck);
 
         // update outputs
         // TODO: complete (maybe make a function for both Trash & War)

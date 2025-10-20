@@ -83,7 +83,7 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
 
     } else {
         curCard = drawPile[0];
-        drawPile.erase(drawPrile.begin());
+        drawPile.erase(drawPile.begin());
     }
 
     while (check_need(curCard)) {
@@ -96,9 +96,12 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
 }
 
 bool Player::check_need(Card& card) {
-    if (card.read_numID() < winningHand.size()) { // if the card value is within the range of the winningHand size
-        for (Card card : winningHand) { // check each card
-            if (winningHand[card.read_numID() - 1].read_isShowing()) { // if our index for that card isn't showing
+    // if the card value is within the range of the winningHand size
+    if (card.read_numID() < (int)winningHand.size()) { 
+        // check each card
+        for (Card card : winningHand) { 
+            // if our index for that card isn't showing
+            if (winningHand[card.read_numID() - 1].read_isShowing()) { 
                 return true;
             }
         }
