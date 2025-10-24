@@ -72,7 +72,7 @@ void Player::move_winning_to_playing() {
 }
 
 // Methods for Trash
-void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector<double>& traceValues) {
+void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector<double>& traceValues, Player* otherPlayer) {
     Card curCard(-1, -1);
 
     if (discardPile.size() > 0) {
@@ -87,7 +87,13 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
     }
 
     while (check_need(curCard)) {
-        int index = curCard.read_numID() - 1; // add case for a jack later
+        int index = -1;
+        if (curCard.read_charID() == 'J') {
+            index = run_jack_algorithm(discardPile, otherPlayer, traceValues);
+        } else {
+            index = curCard.read_numID() - 1;
+        }
+
         swap_card(curCard, index);
     }
 
@@ -97,11 +103,11 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
 
 bool Player::check_need(Card& card) {
     // if the card value is within the range of the winningHand size
-    if (card.read_numID() < (int)winningHand.size()) { 
+    if (card.read_numID() < (int)winningHand.size() || card.read_charID() == 'J') { 
         // check each card
         for (Card card : winningHand) { 
             // if our index for that card isn't showing
-            if (winningHand[card.read_numID() - 1].read_isShowing()) { 
+            if (winningHand[card.read_numID() - 1].read_isShowing() || winningHand[card.read_numID() - 1].read_charID() == 'J') { 
                 return true;
             }
         }
@@ -133,6 +139,65 @@ void Player::swap_card(Card& curCard, int index) {
 
 void Player::empty_hand() {
     playingHand.clear();
+}
+
+int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, vector<doubles>& traceValues) {
+    // It's just easiest to reset this everytime I think
+    vector<int> jackAlgorithmCounter(13, 0);
+    
+    // Check cards in discardPile
+    for (Card discardCard: discardPile) {
+        jackAlgorithmCounter[discardCard.read_numID() - 1] ++;
+    }
+
+    // Check your SHOWING cards
+    for (Card yourCard: playingHand) {
+        if (yourCard.read_isShowing()) {
+            jackAlgorithmCounter[yourCard.read_numID() - 1] ++;
+        }
+    }
+
+    // Check your opponent's SHOWING cards
+    for (Card otherCard: otherPlayer.read_playing_hand()) {
+        if (otherCard.read_isShowing()) {
+            jackAlgorithmCounter[otherCard.read_numID() - 1] ++;
+        }
+    }
+
+    // Find which card number(s) we have seen the most of, because these are the one's we want to choose from
+    vector<int> optimalSpotIndexes;
+    // First find max index
+    int maxIndex = 0;
+    for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
+        if (jackAlgorithmCounter[i] > jackAlgorithmCounter[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+
+    // Then get all ties
+    for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
+        if (jackAlgorithmCounter[i] == jackAlgorithmCounter[maxIndex]) {
+            optimalSpotIndexes.push_back(i);
+        }
+    }
+
+    // Choose randomly from these
+    double r = -1;
+    int p = -1;
+
+    // if trace values run out, return error
+    if (traceValues.empty()) {
+        cerr << "Error: not enough trace values for shuffling" << endl;
+        exit(1);
+    }
+
+    // use trace values for randomness
+    r = traceValues[0];
+    // remove used trace value
+    traceValues.erase(traceValues.begin());
+    p = r * (optimalSpotIndexes.size());
+
+    return optimaSpotIndexes[p];
 }
 
 // Mutator (setter) methods

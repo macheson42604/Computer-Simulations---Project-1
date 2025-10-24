@@ -276,11 +276,11 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
         vector<Card> discardPile;
 
         while (!player1->check_showing() && !player2->check_showing()) {
-            player1->take_turn(deck, discardPile, traceValues);
+            player1->take_turn(deck, discardPile, traceValues, player2);
             if (player1->check_showing()) {
                 break;
             }
-            player2->take_turn(deck, discardPile, traceValues);
+            player2->take_turn(deck, discardPile, traceValues, player1);
         }
 
         // determine winner of round
