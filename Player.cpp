@@ -75,12 +75,12 @@ void Player::move_winning_to_playing() {
 void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector<double>& traceValues, Player* otherPlayer) {
     Card curCard(-1, -1);
 
-    if (discardPile.size() > 0) {
-        if (check_need(discardPile[0])) {
-            curCard = discardPile[0];
-            discardPile.erase(discardPile.begin());
-        }
+    // TODO
+    // check if draw pile is empty and shuffle all cards from discard (except top card) and move to draw pile
 
+    if (discardPile.size() > 0 && check_need(discardPile[0])) {
+        curCard = discardPile[0];
+        discardPile.erase(discardPile.begin());
     } else {
         curCard = drawPile[0];
         drawPile.erase(drawPile.begin());
@@ -101,6 +101,7 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
     
 }
 
+// TODO: add Jack logic
 bool Player::check_need(Card& card) {
     // if the card value is within the range of the winningHand size
     if (card.read_numID() < (int)winningHand.size() || card.read_charID() == 'J') { 
