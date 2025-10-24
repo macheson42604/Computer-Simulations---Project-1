@@ -70,6 +70,7 @@ class Player {
         bool check_showing();
         void swap_card(Card&, int);
         void decrement_handSize();
+        void empty_hand();
 
         // Mutator (setter) methods
         void increment_wins();

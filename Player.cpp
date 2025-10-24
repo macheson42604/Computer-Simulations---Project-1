@@ -131,6 +131,10 @@ void Player::swap_card(Card& curCard, int index) {
     curCard = tempCard;
 }
 
+void Player::empty_hand() {
+    playingHand.clear();
+}
+
 // Mutator (setter) methods
 void Player::increment_wins() {
     numWins++;
