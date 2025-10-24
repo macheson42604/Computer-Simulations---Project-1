@@ -143,23 +143,26 @@ void Player::empty_hand() {
 
 int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, vector<doubles>& traceValues) {
     // It's just easiest to reset this everytime I think
-    vector<int> jackAlgorithmCounter(13, 0);
+    vector<int> jackAlgorithmCounter(playingHand.size(), 0);
     
+    // bruh could prolly use a helper function, but I was a nitwit and am now lazy........
     // Check cards in discardPile
     for (Card discardCard: discardPile) {
-        jackAlgorithmCounter[discardCard.read_numID() - 1] ++;
+        if (discardCard.read_numID() < playingHand.size()) {
+            jackAlgorithmCounter[discardCard.read_numID() - 1] ++;
+        }
     }
 
     // Check your SHOWING cards
     for (Card yourCard: playingHand) {
-        if (yourCard.read_isShowing()) {
+        if (yourCard.read_isShowing() && yourCard.read_numID() < playingHand.size()) {
             jackAlgorithmCounter[yourCard.read_numID() - 1] ++;
         }
     }
 
     // Check your opponent's SHOWING cards
     for (Card otherCard: otherPlayer.read_playing_hand()) {
-        if (otherCard.read_isShowing()) {
+        if (otherCard.read_isShowing() && otherCard.read_numID() < playingHand.size()) {
             jackAlgorithmCounter[otherCard.read_numID() - 1] ++;
         }
     }
@@ -169,7 +172,9 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     // First find max index
     int maxIndex = 0;
     for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
-        if (jackAlgorithmCounter[i] > jackAlgorithmCounter[maxIndex]) {
+        if (playingHand[i].read_charID() == 'J') { // this is necessary for the case of jack being the first card we draw and all of our counters equal 0, then these are not randomly chosen
+            jackAlgorithmCounter[i] = -1;
+        } else if (jackAlgorithmCounter[i] > jackAlgorithmCounter[maxIndex]) {
             maxIndex = i;
         }
     }
