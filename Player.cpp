@@ -141,28 +141,28 @@ void Player::empty_hand() {
     playingHand.clear();
 }
 
-int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, vector<doubles>& traceValues) {
+int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, vector<double>& traceValues) {
     // It's just easiest to reset this everytime I think
     vector<int> jackAlgorithmCounter(playingHand.size(), 0);
     
     // bruh could prolly use a helper function, but I was a nitwit and am now lazy........
     // Check cards in discardPile
     for (Card discardCard: discardPile) {
-        if (discardCard.read_numID() < playingHand.size()) {
+        if (discardCard.read_numID() < (int)playingHand.size()) {
             jackAlgorithmCounter[discardCard.read_numID() - 1] ++;
         }
     }
 
     // Check your SHOWING cards
     for (Card yourCard: playingHand) {
-        if (yourCard.read_isShowing() && yourCard.read_numID() < playingHand.size()) {
+        if (yourCard.read_isShowing() && yourCard.read_numID() < (int)playingHand.size()) {
             jackAlgorithmCounter[yourCard.read_numID() - 1] ++;
         }
     }
 
     // Check your opponent's SHOWING cards
-    for (Card otherCard: otherPlayer.read_playing_hand()) {
-        if (otherCard.read_isShowing() && otherCard.read_numID() < playingHand.size()) {
+    for (Card otherCard: otherPlayer->read_playing_hand()) {
+        if (otherCard.read_isShowing() && otherCard.read_numID() < (int)playingHand.size()) {
             jackAlgorithmCounter[otherCard.read_numID() - 1] ++;
         }
     }
@@ -202,7 +202,7 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     traceValues.erase(traceValues.begin());
     p = r * (optimalSpotIndexes.size());
 
-    return optimaSpotIndexes[p];
+    return optimalSpotIndexes[p];
 }
 
 // Mutator (setter) methods
