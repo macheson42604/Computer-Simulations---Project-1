@@ -190,10 +190,16 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     }
 
     // Then get all ties
+    // This will result in optimalSpotIndexes ALWAYS having at least 1 value in vector
     for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
         if (jackAlgorithmCounter[i] == jackAlgorithmCounter[maxIndex]) {
             optimalSpotIndexes.push_back(i);
         }
+    }
+
+    // If there's only 1 optimal spot, immediately select it
+    if (optimalSpotIndexes.size() == 1) {
+        return optimalSpotIndexes[0];
     }
 
     // Choose randomly from these
