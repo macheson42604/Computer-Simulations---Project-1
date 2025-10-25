@@ -77,6 +77,12 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
 
     // TODO
     // check if draw pile is empty and shuffle all cards from discard (except top card) and move to draw pile
+    /* "If the draw pile is depleted at the beginning of a turn, the discard pile (except for the top-most, "showing" card) is shuffled to become the new draw pile. 
+    The discard pile retains the top-most card, which is from the end of the other player's last turn."
+    */
+    if (drawPile.size() == 0) {
+        move_discard_to_draw(discardPile, drawPile);
+    }
 
     // check if there are any cards in discard pile and if the top card is useful to us
     if (discardPile.size() > 0 && check_need(discardPile[0])) {
@@ -84,7 +90,7 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
         discardPile.erase(discardPile.begin());
     } 
     // if there are no cards in the discard pile or the top card is not needed, select card from draw pile
-    else {
+    else {        
         curCard = drawPile[0];
         drawPile.erase(drawPile.begin());
     }
@@ -134,15 +140,39 @@ bool Player::check_showing() {
     return true;
 }
 
-void Player::swap_card(Card& curCard, int index) {
-    if (index < 0 || index >= (int)playingHand.size()) {
-        cerr << "Error: invalid index for swapping card" << endl;
-        return;
+void Player::move_discard_to_draw(vector<Card>& discardPile, vector<Card>& drawPile) {
+    // reserve the top card from the discard pile
+    Card topDiscard = discardPile[0];
+    discardPile.erase(discardPile.begin());
+
+    // shuffle rest of cards in discard pile and set all the cards to not showing
+    shuffle_cards(this->discardPile);
+    for (Card card : discardPile) {
+        card.set_not_showing();
     }
 
+    // move shuffled cards from discard to draw
+    drawPile.insert(drawPile.end(), discardPile.begin(), discardPile.end());
+
+    // erase all cards from discardPile and add top discard pile card
+    discardPile.clear();
+    discardPile.insert(discardPile.begin(), topDiscard);
+
+}
+
+void Player::swap_card(Card& curCard, int index) {
+    // check if index given is out of bounds
+    if (index < 0 || index >= (int)playingHand.size()) {
+        cerr << "Error: invalid index for swapping card" << endl;
+        exit(1);
+    }
+
+    // create third temporary card
     Card tempCard = playingHand[index];
+    // place card in hand into given index in array and set card to be showing
     playingHand[index] = curCard;
     playingHand[index].showCard();
+    // take the card from the array to be new card in hand (this card could be set as showing or not showing)
     curCard = tempCard;
 }
 
