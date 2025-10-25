@@ -78,37 +78,45 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
     // TODO
     // check if draw pile is empty and shuffle all cards from discard (except top card) and move to draw pile
 
+    // check if there are any cards in discard pile and if the top card is useful to us
     if (discardPile.size() > 0 && check_need(discardPile[0])) {
         curCard = discardPile[0];
         discardPile.erase(discardPile.begin());
-    } else {
+    } 
+    // if there are no cards in the discard pile or the top card is not needed, select card from draw pile
+    else {
         curCard = drawPile[0];
         drawPile.erase(drawPile.begin());
     }
 
-    while (check_need(curCard)) {
-        int index = -1;
+    // with the current card in hand, check if the card can be swapped with anything in array
+    while (check_need(curCard) && !check_showing()) {
+        // initialize index to match current card number's index
+        int index = curCard.read_numID() - 1;
+
+        // if current card in hand is a jack, run the check algorithm to decide which card in array to swap with jack
         if (curCard.read_charID() == 'J') {
             index = run_jack_algorithm(discardPile, otherPlayer, traceValues);
-        } else {
-            index = curCard.read_numID() - 1;
-        }
+        } 
 
+        // swap cards
         swap_card(curCard, index);
     }
 
+    // when the current card in hand is useless, add to beginning (top) of discard pile
     discardPile.insert(discardPile.begin(), curCard);
     
 }
 
-// TODO: add Jack logic
+// checks the current card in hand is a value that can be played with number of cards in array
+// checks if the current card value can replace a card that's faced down or slot that currently has a jack
 bool Player::check_need(Card& card) {
-    // if the card value is within the range of the winningHand size
-    if (card.read_numID() < (int)winningHand.size() || card.read_charID() == 'J') { 
+    // if the card value is within the range of the playingHand size
+    if (card.read_numID() < (int)playingHand.size() || card.read_charID() == 'J') { 
         // check each card
-        for (Card card : winningHand) { 
+        for (Card card : playingHand) { 
             // if our index for that card isn't showing
-            if (winningHand[card.read_numID() - 1].read_isShowing() || winningHand[card.read_numID() - 1].read_charID() == 'J') { 
+            if (playingHand[card.read_numID() - 1].read_isShowing() || playingHand[card.read_numID() - 1].read_charID() == 'J') { 
                 return true;
             }
         }
@@ -173,7 +181,8 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     // First find max index
     int maxIndex = 0;
     for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
-        if (playingHand[i].read_charID() == 'J') { // this is necessary for the case of jack being the first card we draw and all of our counters equal 0, then these are not randomly chosen
+        // need to check if the card in the array is showing before checking if it's a Jack
+        if (playingHand[i].read_isShowing() && playingHand[i].read_charID() == 'J') { // this is necessary for the case of jack being the first card we draw and all of our counters equal 0, then these are not randomly chosen
             jackAlgorithmCounter[i] = -1;
         } else if (jackAlgorithmCounter[i] > jackAlgorithmCounter[maxIndex]) {
             maxIndex = i;
@@ -201,8 +210,9 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     r = traceValues[0];
     // remove used trace value
     traceValues.erase(traceValues.begin());
-    p = r * (optimalSpotIndexes.size());
 
+    // select optimal index using the random variable
+    p = (int)(r * optimalSpotIndexes.size());
     return optimalSpotIndexes[p];
 }
 
