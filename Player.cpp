@@ -146,7 +146,7 @@ void Player::move_discard_to_draw(vector<Card>& discardPile, vector<Card>& drawP
     discardPile.erase(discardPile.begin());
 
     // shuffle rest of cards in discard pile and set all the cards to not showing
-    shuffle_cards(this->discardPile);
+    shuffle_cards(discardPile);
     for (Card card : discardPile) {
         card.set_not_showing();
     }
