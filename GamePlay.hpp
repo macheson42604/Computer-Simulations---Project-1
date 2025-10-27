@@ -15,12 +15,11 @@ void play_war(map<char, int>&, Player*&, Player*&);
 
 // Trash
 void setup_trash(Player& , Player& , vector<Card>&);
-void play_trash(map<char, int>&, Player& , Player& , vector<Card>&);
+void play_trash(map<char, int>&, Player*& , Player*& , vector<Card>&);
 
 // Additional Helpers
 vector<Card> make_deck(char);
 void shuffle_cards(vector<Card>&);
 bool validate_deck(vector<Card>&);
-
 
 #endif

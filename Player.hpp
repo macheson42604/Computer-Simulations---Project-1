@@ -72,6 +72,7 @@ class Player {
         void empty_hand();
         int run_jack_algorithm(vector<Card>&, Player*, vector<double>&);
         void move_discard_to_draw(vector<Card>&, vector<Card>&);
+        int calc_num_from_winning();
 
         // Mutator (setter) methods
         void increment_wins();

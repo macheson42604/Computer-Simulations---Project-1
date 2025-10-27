@@ -19,7 +19,10 @@ Player::Player() {
     handSize = 10;
 }
 
-// Methods for War
+// --------------------------------------------------------------------------------------------
+// METHODS FOR WAR
+// --------------------------------------------------------------------------------------------
+
 Card Player::draw_from_playing_hand() {
     // draw top card from the playing hand
     if (playingHand.empty()) {
@@ -71,7 +74,12 @@ void Player::move_winning_to_playing() {
     }
 }
 
-// Methods for Trash
+
+
+// --------------------------------------------------------------------------------------------
+// METHODS FOR TRASH
+// --------------------------------------------------------------------------------------------
+
 void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector<double>& traceValues, Player* otherPlayer) {
     Card curCard(-1, -1);
 
@@ -117,21 +125,28 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
 // checks the current card in hand is a value that can be played with number of cards in array
 // checks if the current card value can replace a card that's faced down or slot that currently has a jack
 bool Player::check_need(Card& card) {
-    // if the card value is within the range of the playingHand size
-    if (card.read_numID() < (int)playingHand.size() || card.read_charID() == 'J') { 
-        // check each card
-        for (Card card : playingHand) { 
-            // if our index for that card isn't showing
-            if (playingHand[card.read_numID() - 1].read_isShowing() || playingHand[card.read_numID() - 1].read_charID() == 'J') { 
-                return true;
-            }
-        }
+    // if card is a jack, return true immediately (we can always use a jack)
+    if (card.read_charID() == 'J') {
+        return true;
     }
 
+    // if the card value is within the range of the playingHand size 
+    if (card.read_numID() < (int)playingHand.size()) { 
+        // check if the card at that index is not showing or is a jack
+        if (!playingHand[card.read_numID() - 1].read_isShowing() || playingHand[card.read_numID() - 1].read_charID() == 'J') { 
+            return true;
+        }
+    }
+    
     return false;
 }
 
 bool Player::check_showing() {
+    if (playingHand.empty()) {
+        cerr << "Error: cannot check showing because playing hand is empty" << endl;
+        exit(1);
+    }
+    
     for (const Card& card : playingHand) {
         if (card.read_isShowing() == false) {
             return false;
@@ -252,6 +267,29 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     return optimalSpotIndexes[p];
 }
 
+int Player::calc_num_from_winning() {
+    /*
+    In Trash we decide who is winning by determining who has the smallest number of array slots to fill before the game ends. 
+    Calculate remaining number of arrays we need to cover (each array size: 1, 2, ..., n) = (n+1)n/2
+    Calculate remaining number of cards that need to be showing in current array
+    Sum for remaining number of cards that need to be showing to win game
+    */
+
+    // use current handSize
+    int remainArrs = handSize - 1;
+
+    // remaining cards in current array to show
+    int remainShow = 0;
+    for (Card card: playingHand) {
+        if (!card.read_isShowing()) {remainShow ++;}
+    }
+
+    // sum remaining num cards
+    return ((remainArrs + 1) * remainArrs / 2) + remainShow;
+}
+
+
+
 // Mutator (setter) methods
 void Player::increment_wins() {
     numWins++;
@@ -264,7 +302,6 @@ void Player::decrement_handSize() {
 void Player::set_isOut(const bool) {
     isOut = true;
 }
-
 
 
 // Accessor (getter) methods

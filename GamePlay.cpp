@@ -86,10 +86,11 @@ int main(int argc, char* argv[]) {
 
     // running Trash
     if (gameTypeChar == 'T') {
-        return 0; // TODO: implement Trash
+        // setup already occurs in play_trash() as the setup must occur after restart each round with 1 less card in array (for one of the players)
+        play_trash(outputs, player1, player2, deck);
     }
+    // running War
     else if (gameTypeChar == 'W') {
-         // running War
         setup_war(player1, player2, deck);
         play_war(outputs, player1, player2);
     }
@@ -268,19 +269,65 @@ void setup_trash(Player*& player1, Player*& player2, vector<Card>& deck) {
 
     player1->add_to_winning_hand(deck1); // if erroring, initialize function input outside of function call
     player2->add_to_winning_hand(deck2);
+
+    // move winning hands to playing hands
+    player1->move_winning_to_playing();
+    player2->move_winning_to_playing();
 }
 
 void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vector<Card>& deck) {
+    int winningPlayer = 0;
+
+    // while both players have an array of cards
     while (player1->read_handSize() > 0 && player2->read_handSize() > 0) {
         setup_trash(player1, player2, deck);
         vector<Card> discardPile;
 
+        // while both players don't have all of their cards in the array showing
         while (!player1->check_showing() && !player2->check_showing()) {
             player1->take_turn(deck, discardPile, traceValues, player2);
             if (player1->check_showing()) {
+                // update outputs
+                outputs['N'] ++; // add 1 to turn counter
+                // Determine who is currently winning
+                // Winner: whoever has a lower number of cards until winning the game
+                int player1CardCount = player1->calc_num_from_winning();
+                int player2CardCount = player2->calc_num_from_winning();
+                if (player1CardCount < player2CardCount && winningPlayer != 1) {
+                    outputs['T'] ++; // add 1 to  winning transition counter
+                    outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+                    winningPlayer = 1;
+                }
+                else if (player2CardCount < player1CardCount && winningPlayer != 2) {
+                    outputs['T'] ++; // add 1 to  winning transition counter
+                    outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+                    winningPlayer = 2;
+                }
+
                 break;
             }
             player2->take_turn(deck, discardPile, traceValues, player1);
+
+            // update outputs
+            // outputs need to be updated after each turn to see who is closer to winning (according to instructions)
+            outputs['N'] ++; // add 1 to turn counter
+
+            // Determine who is currently winning
+            // Winner: whoever has a lower number of cards until winning the game
+            int player1CardCount = player1->calc_num_from_winning();
+            int player2CardCount = player2->calc_num_from_winning();
+
+            if (player1CardCount < player2CardCount && winningPlayer != 1) {
+                outputs['T'] ++; // add 1 to  winning transition counter
+                outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+                winningPlayer = 1;
+            }
+            else if (player2CardCount < player1CardCount && winningPlayer != 2) {
+                outputs['T'] ++; // add 1 to  winning transition counter
+                outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+                winningPlayer = 2;
+            }
+            
         }
 
         // determine winner of round
@@ -298,9 +345,6 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
         }
 
         shuffle_cards(deck);
-
-        // update outputs
-        // TODO: complete (maybe make a function for both Trash & War)
     }
 
 }
