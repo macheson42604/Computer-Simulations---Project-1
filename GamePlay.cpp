@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
     if (!validate_deck(deck)) {
         cerr << "Deck initialized incorrectly" << endl;
         return 1;
-    };
+    }
 
     // shuffle deck of cards
     // return error if not enough trace values
@@ -141,6 +141,7 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add the winning cards to the winner's winning hand
             // add player 1's card first, then player 2's card
             player1->add_to_winning_hand({card1, card2});
+            //cout << "Player 1 Wins" << endl; // FOR TESTING
         }
 
         // player 2 wins the round
@@ -154,6 +155,7 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add the winning cards to the winner's winning hand
             // add player 2's card first, then player 1's card
             player2->add_to_winning_hand({card2, card1});
+            //cout << "Player 2 Wins" << endl; // FOR TESTING
         }
 
         // players tie the round
@@ -161,6 +163,7 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
             // add both cards to the tiedCards vector (order doesn't matter)
             tiedCards.push_back(card1);
             tiedCards.push_back(card2);
+            //cout << "Tie" << endl; // FOR TESTING
         }
 
         // check if either player is out of cards (check both playing and winning hands)
@@ -223,12 +226,22 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
         }
 
         // VALIDATION CHECK - all cards should now be in tied pile
-        validate_deck(tiedCards);
+        if (!validate_deck(tiedCards)) {
+            cerr << "Ending deck failed validation" << endl;
+            exit(1);
+        }
     }
 
     // player 2 is out, player 1 is not
     else if (!player1->read_isOut() && player2->read_isOut()) {
         player1->increment_wins();
+
+        // in the case that the game ends in a tie (one player has most of the cards, the tied cards pile has come amount, and the other player is completely out of playing and winning hands)
+        if (!tiedCards.empty()) {
+            player1->add_to_winning_hand(tiedCards);
+            // clear the tiedCards vector
+            tiedCards.clear();
+        }
 
         // VALIDATION CHECK - all cards should now be in player 1's hand
         vector<Card> p1Hand = player1->read_playing_hand();
@@ -236,11 +249,21 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
 
         p1Hand.insert(p1Hand.end(), p1WHand.begin(), p1WHand.end());
 
-        validate_deck(p1Hand);
+        if (!validate_deck(p1Hand)) {
+            cerr << "Ending deck failed validation" << endl;
+            exit(1);
+        }
     }
     // player 1 is out, player 2 is not
     else if (player1->read_isOut() && !player2->read_isOut()) {
         player2->increment_wins();
+
+        // in the case that the game ends in a tie (one player has most of the cards, the tied cards pile has come amount, and the other player is completely out of playing and winning hands)
+        if (!tiedCards.empty()) {
+            player2->add_to_winning_hand(tiedCards);
+            // clear the tiedCards vector
+            tiedCards.clear();
+        }
 
         // VALIDATION CHECK - all cards should now be in player 2's hand
         vector<Card> p2Hand = player2->read_playing_hand();
@@ -248,7 +271,10 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
 
         p2Hand.insert(p2Hand.end(), p2WHand.begin(), p2WHand.end());
 
-        validate_deck(p2Hand);
+        if (!validate_deck(p2Hand)) {
+            cerr << "Ending deck failed validation" << endl;
+            exit(1);
+        }
     }
 }
 
