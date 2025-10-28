@@ -133,9 +133,16 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
 // checks the current card in hand is a value that can be played with number of cards in array
 // checks if the current card value can replace a card that's faced down or slot that currently has a jack
 bool Player::check_need(Card& card) {
-    // if card is a jack, return true immediately (we can always use a jack)
+    // if card is a jack, check if any valid positions to place jack
+    // can use a jack if there is at least 1 spot that is not showing (do not use on a card that's already a jack)
     if (card.read_charID() == 'J') {
-        return true;
+        for (int i = 0; i < (int)playingHand.size(); i++) {
+            if (!playingHand[i].read_isShowing()) {
+                return true;
+            }
+        }
+        // no valid positions for Jack (all cards are showing)
+        return false;
     }
 
     // if the card value is within the range of the playingHand size 
@@ -143,7 +150,7 @@ bool Player::check_need(Card& card) {
         cout << "Error: invalid card number ID in check_need" << endl;
         exit(1);
     }
-    if (card.read_numID() < (int)playingHand.size()) { 
+    if (card.read_numID() <= (int)playingHand.size()) { 
         // check if the card at that index is not showing or is a jack
         if (!playingHand[card.read_numID() - 1].read_isShowing() || playingHand[card.read_numID() - 1].read_charID() == 'J') { 
             return true;
@@ -188,8 +195,9 @@ void Player::move_discard_to_draw(vector<Card>& discardPile, vector<Card>& drawP
     discardPile.erase(discardPile.begin());
 
     // shuffle rest of cards in discard pile and set all the cards to not showing
+    // add reference to modify original cards in discardPile
     shuffle_cards(discardPile);
-    for (Card card : discardPile) {
+    for (Card& card : discardPile) {
         card.set_not_showing();
     }
 
@@ -229,7 +237,7 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     // bruh could prolly use a helper function, but I was a nitwit and am now lazy........
     // Check cards in discardPile
     for (Card discardCard: discardPile) {
-        if (discardCard.read_numID() >= 1 && discardCard.read_numID() < (int)playingHand.size()) {
+        if (discardCard.read_numID() >= 1 && discardCard.read_numID() <= (int)playingHand.size()) {
             jackAlgorithmCounter[discardCard.read_numID() - 1] ++;
         }
     }
@@ -248,20 +256,23 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
         }
     }
 
+    // Exclude positions that can't be replaced (cards that are already showing and in the correct position)
+    for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
+        // need to check if the card in the array is showing before checking if it's a Jack
+        // this is necessary for the case of jack being the first card we draw and all of our counters equal 0, then these are not randomly chosen
+        if (playingHand[i].read_isShowing() && (playingHand[i].read_charID() == 'J' || playingHand[i].read_numID() == i+1)) { 
+            jackAlgorithmCounter[i] = -1;
+        } 
+    }
+
     // Find which card number(s) we have seen the most of, because these are the one's we want to choose from
     vector<int> optimalSpotIndexes;
     // First find max index
     int maxIndex = -1;
     int maxValue = -1;
     for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
-        // Exclude positions that can't be replaced (cards that are already showing and in the correct position)
-        // need to check if the card in the array is showing before checking if it's a Jack
-        // this is necessary for the case of jack being the first card we draw and all of our counters equal 0, then these are not randomly chosen
-        if (playingHand[i].read_isShowing() && (playingHand[i].read_charID() == 'J' || playingHand[i].read_numID() == i+1)) { 
-            jackAlgorithmCounter[i] = -1;
-        } 
-
-        if (jackAlgorithmCounter[i] > maxValue) {
+        // excluding marked indices with -1 values
+        if (jackAlgorithmCounter[i] != -1 && jackAlgorithmCounter[i] > maxValue) {
             maxIndex = i;
             maxValue = jackAlgorithmCounter[i];
         }

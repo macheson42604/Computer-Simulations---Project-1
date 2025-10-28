@@ -282,13 +282,16 @@ void setup_trash(Player*& player1, Player*& player2, vector<Card>& deck) {
    player2->empty_hand();
 
    // make sure to reset isShowing for all cards to false
-    for (Card card : deck) {
+   // make sure using reference to modify original cards in deck
+    for (Card& card : deck) {
         card.set_not_showing();
     }
-    
+
+    // assign player1 and player2 appropriate hand sizes
     vector<Card> deck1(deck.begin(), deck.begin() + player1->read_handSize());
     vector<Card> deck2(deck.begin() + deck1.size(), deck.begin() + deck1.size() + player2->read_handSize());
 
+    // add rest of cards back to deck (drawingPile)
     deck = vector<Card> (deck.begin() + deck1.size() + deck2.size(), deck.end());
 
     // couldn't reuse War functions because move_winning_to_playing() would shuffle again (eating up trace values)
@@ -307,11 +310,11 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
         // while both players don't have all of their cards in the array showing
         while (!player1->check_showing() && !player2->check_showing()) {
             // DEBUG
-            // cout << "NEW TURN" << endl;
+            cout << "NEW TURN" << endl;
             // DEBUG
             // cout << "Player 1 Hand: " << endl;
 
-            
+
             player1->take_turn(deck, discardPile, traceValues, player2);
             if (player1->check_showing()) {
                 // update outputs
@@ -330,6 +333,9 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
                     outputs['L'] = outputs['N']; // set last transition equal to the curren turn
                     winningPlayer = 2;
                 }
+
+                cout << "Player 1 remaining cards: " << player1CardCount << endl;
+                cout << "Player 2 remaining cards: " << player2CardCount << endl;
 
                 break;
             }
@@ -356,6 +362,9 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
                 outputs['L'] = outputs['N']; // set last transition equal to the curren turn
                 winningPlayer = 2;
             }
+
+            cout << "Player 1 remaining cards: " << player1CardCount << endl;
+            cout << "Player 2 remaining cards: " << player2CardCount << endl;
             
         }
 
