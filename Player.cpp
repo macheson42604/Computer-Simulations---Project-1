@@ -224,6 +224,8 @@ void Player::swap_card(Card& curCard, int index) {
     playingHand[index].showCard();
     // take the card from the array to be new card in hand (this card could be set as showing or not showing)
     curCard = tempCard;
+    // set current card in hand to not showing
+    curCard.set_not_showing();
 }
 
 void Player::empty_hand() {
@@ -329,7 +331,7 @@ int Player::calc_num_from_winning() {
 
     // remaining cards in current array to show
     int remainShow = 0;
-    for (Card card: playingHand) {
+    for (const Card& card: playingHand) {
         if (!card.read_isShowing()) {remainShow ++;}
     }
 
