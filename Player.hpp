@@ -67,6 +67,7 @@ class Player {
         void take_turn(vector<Card>&, vector<Card>&, vector<double>&, Player*);
         bool check_need(Card&);
         bool check_showing();
+        void add_to_playing_hand(const vector<Card>);
         void swap_card(Card&, int);
         void decrement_handSize();
         void empty_hand();

@@ -113,8 +113,6 @@ void setup_war(Player*& player1, Player*& player2, vector<Card>& deck) {
     player1->move_winning_to_playing();
     player2->move_winning_to_playing();
 
-
-    // Further setup for the War game would go here
 }
 
 void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
@@ -293,12 +291,9 @@ void setup_trash(Player*& player1, Player*& player2, vector<Card>& deck) {
 
     deck = vector<Card> (deck.begin() + deck1.size() + deck2.size(), deck.end());
 
-    player1->add_to_winning_hand(deck1); // if erroring, initialize function input outside of function call
-    player2->add_to_winning_hand(deck2);
-
-    // move winning hands to playing hands
-    player1->move_winning_to_playing();
-    player2->move_winning_to_playing();
+    // couldn't reuse War functions because move_winning_to_playing() would shuffle again (eating up trace values)
+    player1->add_to_playing_hand(deck1);
+    player2->add_to_playing_hand(deck2);
 }
 
 void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vector<Card>& deck) {
@@ -311,6 +306,12 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
 
         // while both players don't have all of their cards in the array showing
         while (!player1->check_showing() && !player2->check_showing()) {
+            // DEBUG
+            // cout << "NEW TURN" << endl;
+            // DEBUG
+            // cout << "Player 1 Hand: " << endl;
+
+            
             player1->take_turn(deck, discardPile, traceValues, player2);
             if (player1->check_showing()) {
                 // update outputs
@@ -332,6 +333,8 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
 
                 break;
             }
+            // DEBUG
+            // cout << "Player 2 Hand: " << endl;
             player2->take_turn(deck, discardPile, traceValues, player1);
 
             // update outputs
@@ -356,6 +359,11 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
             
         }
 
+        // DEBUG
+        // cout << "ROUND OVER" << endl;
+        // cout << "Player 1 showing: " << player1->check_showing() << endl;
+        // cout << "Player 2 showing: " << player2->check_showing() << endl;
+
         // determine winner of round
         if (player1->check_showing() && !player2->check_showing()) {
             player1->decrement_handSize();
@@ -370,6 +378,15 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
             exit(1);
         }
 
+        // collect all cards back into deck for reshuffling (deck is used as the drawPile)
+        deck.insert(deck.end(), discardPile.begin(), discardPile.end());
+        const vector<Card>& p1Cards = player1->read_playing_hand();
+        const vector<Card>& p2Cards = player2->read_playing_hand();
+        deck.insert(deck.end(), p1Cards.begin(), p1Cards.end());
+        deck.insert(deck.end(), p2Cards.begin(), p2Cards.end());
+        discardPile.clear();
+        player1->empty_hand();
+        player2->empty_hand();
         shuffle_cards(deck);
     }
 

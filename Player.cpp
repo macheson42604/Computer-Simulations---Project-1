@@ -37,6 +37,7 @@ Card Player::draw_from_playing_hand() {
     return topCard;
 }
 
+
 void Player::add_to_winning_hand(const vector<Card> addCards) {
     if (addCards.empty()) {
         cerr << "Error: cannot add to winning hand because the input vector is empty" << endl;
@@ -98,13 +99,20 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
         discardPile.erase(discardPile.begin());
     } 
     // if there are no cards in the discard pile or the top card is not needed, select card from draw pile
-    else {        
+    else if (drawPile.size() > 0) {        
         curCard = drawPile[0];
         drawPile.erase(drawPile.begin());
     }
-
+    else {
+        cerr << "Error: both draw pile and discard pile are empty when trying to take a turn" << endl;
+        exit(1);
+    }
+    
     // with the current card in hand, check if the card can be swapped with anything in array
     while (check_need(curCard) && !check_showing()) {
+        // DEBUG
+        // cout << "Current Card in Hand: " << curCard.read_numID() << " " << curCard.read_suitID() << endl;
+
         // initialize index to match current card number's index
         int index = curCard.read_numID() - 1;
 
@@ -131,6 +139,10 @@ bool Player::check_need(Card& card) {
     }
 
     // if the card value is within the range of the playingHand size 
+    if (card.read_numID() < 1) {
+        cout << "Error: invalid card number ID in check_need" << endl;
+        exit(1);
+    }
     if (card.read_numID() < (int)playingHand.size()) { 
         // check if the card at that index is not showing or is a jack
         if (!playingHand[card.read_numID() - 1].read_isShowing() || playingHand[card.read_numID() - 1].read_charID() == 'J') { 
@@ -155,7 +167,22 @@ bool Player::check_showing() {
     return true;
 }
 
+
+void Player::add_to_playing_hand(const vector<Card> addCards) {
+    if (addCards.empty()) {
+        cerr << "Error: cannot add to playing hand because the input vector is empty" << endl;
+        return;
+    }
+
+    // append all the cards being added to the current playing hand vector
+    playingHand.insert(playingHand.end(), addCards.begin(), addCards.end());
+}
+
 void Player::move_discard_to_draw(vector<Card>& discardPile, vector<Card>& drawPile) {
+    if (discardPile.size() <= 1) {
+        cerr << "Error: cannot move discard to draw because there are not enough cards in discard pile" << endl;
+        exit(1);
+    }
     // reserve the top card from the discard pile
     Card topDiscard = discardPile[0];
     discardPile.erase(discardPile.begin());
@@ -202,21 +229,21 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     // bruh could prolly use a helper function, but I was a nitwit and am now lazy........
     // Check cards in discardPile
     for (Card discardCard: discardPile) {
-        if (discardCard.read_numID() < (int)playingHand.size()) {
+        if (discardCard.read_numID() >= 1 && discardCard.read_numID() < (int)playingHand.size()) {
             jackAlgorithmCounter[discardCard.read_numID() - 1] ++;
         }
     }
 
     // Check your SHOWING cards
     for (Card yourCard: playingHand) {
-        if (yourCard.read_isShowing() && yourCard.read_numID() < (int)playingHand.size()) {
+        if (yourCard.read_isShowing() && yourCard.read_numID() >= 1 && yourCard.read_numID() <= (int)playingHand.size()) {
             jackAlgorithmCounter[yourCard.read_numID() - 1] ++;
         }
     }
 
     // Check your opponent's SHOWING cards
     for (Card otherCard: otherPlayer->read_playing_hand()) {
-        if (otherCard.read_isShowing() && otherCard.read_numID() < (int)playingHand.size()) {
+        if (otherCard.read_isShowing() && otherCard.read_numID() >= 1 && otherCard.read_numID() <= (int)playingHand.size()) {
             jackAlgorithmCounter[otherCard.read_numID() - 1] ++;
         }
     }
@@ -224,20 +251,31 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     // Find which card number(s) we have seen the most of, because these are the one's we want to choose from
     vector<int> optimalSpotIndexes;
     // First find max index
-    int maxIndex = 0;
+    int maxIndex = -1;
+    int maxValue = -1;
     for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
+        // Exclude positions that can't be replaced (cards that are already showing and in the correct position)
         // need to check if the card in the array is showing before checking if it's a Jack
-        if (playingHand[i].read_isShowing() && playingHand[i].read_charID() == 'J') { // this is necessary for the case of jack being the first card we draw and all of our counters equal 0, then these are not randomly chosen
+        // this is necessary for the case of jack being the first card we draw and all of our counters equal 0, then these are not randomly chosen
+        if (playingHand[i].read_isShowing() && (playingHand[i].read_charID() == 'J' || playingHand[i].read_numID() == i+1)) { 
             jackAlgorithmCounter[i] = -1;
-        } else if (jackAlgorithmCounter[i] > jackAlgorithmCounter[maxIndex]) {
+        } 
+
+        if (jackAlgorithmCounter[i] > maxValue) {
             maxIndex = i;
+            maxValue = jackAlgorithmCounter[i];
         }
+    }
+
+    if (maxIndex == -1) {
+        cerr << "Error: maxIndex was not updated in jack algorithm" << endl;
+        exit(1);
     }
 
     // Then get all ties
     // This will result in optimalSpotIndexes ALWAYS having at least 1 value in vector
     for (int i = 0; i < (int)jackAlgorithmCounter.size(); i ++) {
-        if (jackAlgorithmCounter[i] == jackAlgorithmCounter[maxIndex]) {
+        if (jackAlgorithmCounter[i] == maxValue) {
             optimalSpotIndexes.push_back(i);
         }
     }
