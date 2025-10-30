@@ -81,7 +81,7 @@ void Player::move_winning_to_playing() {
 // METHODS FOR TRASH
 // --------------------------------------------------------------------------------------------
 
-void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector<double>& traceValues, Player* otherPlayer) {
+void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, Player* otherPlayer) {
     Card curCard(-1, -1);
 
     // TODO
@@ -118,7 +118,7 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, vector
 
         // if current card in hand is a jack, run the check algorithm to decide which card in array to swap with jack
         if (curCard.read_charID() == 'J') {
-            index = run_jack_algorithm(discardPile, otherPlayer, traceValues);
+            index = run_jack_algorithm(discardPile, otherPlayer);
         } 
 
         // swap cards
@@ -232,7 +232,7 @@ void Player::empty_hand() {
     playingHand.clear();
 }
 
-int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, vector<double>& traceValues) {
+int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer) {
     // It's just easiest to reset this everytime I think
     vector<int> jackAlgorithmCounter(playingHand.size(), 0);
     
@@ -303,15 +303,15 @@ int Player::run_jack_algorithm(vector<Card>& discardPile, Player* otherPlayer, v
     int p = -1;
 
     // if trace values run out, return error
-    if (traceValues.empty()) {
+    /*if (traceValues.empty()) {
         cerr << "Error: not enough trace values for shuffling" << endl;
         exit(1);
-    }
+    }*/
 
     // use trace values for randomness
-    r = traceValues[0];
+    r = get_traceValue(); // traceValues[0];
     // remove used trace value
-    traceValues.erase(traceValues.begin());
+    //traceValues.erase(traceValues.begin());
 
     // select optimal index using the random variable
     p = (int)(r * optimalSpotIndexes.size());

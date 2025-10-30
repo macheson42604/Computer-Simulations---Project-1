@@ -64,14 +64,14 @@ class Player {
         void move_winning_to_playing();
 
         // Methods for Trash
-        void take_turn(vector<Card>&, vector<Card>&, vector<double>&, Player*);
+        void take_turn(vector<Card>&, vector<Card>&, Player*);
         bool check_need(Card&);
         bool check_showing();
         void add_to_playing_hand(const vector<Card>);
         void swap_card(Card&, int);
         void decrement_handSize();
         void empty_hand();
-        int run_jack_algorithm(vector<Card>&, Player*, vector<double>&);
+        int run_jack_algorithm(vector<Card>&, Player*);
         void move_discard_to_draw(vector<Card>&, vector<Card>&);
         int calc_num_from_winning();
 

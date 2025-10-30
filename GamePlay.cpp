@@ -20,7 +20,8 @@ using namespace std;
 
 
  // global trace values
- vector<double> traceValues;
+ //vector<double> traceValues;
+ ifstream traceFileStream;
 
 /**
  * main(): main function to run both games: War, Trash
@@ -43,16 +44,16 @@ int main(int argc, char* argv[]) {
     }
 
     // same trace files for both games into arraylist of doubles
-    ifstream traceFileStream(traceFile);
+    traceFileStream.open(traceFile);
     if (!traceFileStream.is_open()) {
         cerr << "Error: could not open trace file" << endl;
         return 1;
     }
-    double value;
+    /*double value;
 
-    while (traceFileStream >> value) {
+    while (traceFileStream >> value) { // CANNOT READ IN TRACE VALUES LIKE THIS
         traceValues.push_back(value);
-    }
+    }*/
 
     /*
     output: map<char, int>
@@ -78,10 +79,10 @@ int main(int argc, char* argv[]) {
 
     // shuffle deck of cards
     // return error if not enough trace values
-    if (traceValues.size() < deck.size()) {
+    /*if (traceValues.size() < deck.size()) { // can no longer check this way
         cerr << "Error: not enough trace values for shuffling" << endl;
         return 1;
-    }
+    }*/
     shuffle_cards(deck);
 
     // running Trash
@@ -97,6 +98,8 @@ int main(int argc, char* argv[]) {
    
     // output results
     cout << "OUTPUT " << gameType << " turns " << outputs['N'] << " transitions " << outputs['T'] << " last " << outputs['L']/(double)outputs['N'] << endl;
+
+    traceFileStream.close();
 
     return 0;
 }
@@ -207,15 +210,15 @@ void play_war(map<char, int>& outputs, Player*& player1, Player*& player2) {
 
     // if both players are out (tie game - aka all 52 cards somehow are in the tiedCards deck), randomly choose a winning player
     if (player1->read_isOut() && player2->read_isOut()) {
-        if (traceValues.empty()) {
+        /*if (traceValues.empty()) {
             cerr << "Error: not enough trace values for shuffling" << endl;
             exit(1);
-        }
+        }*/
 
         // use trace values for randomness
-        double r = traceValues[0];
+        double r = get_traceValue(); // traceValues[0];
         // remove used trace value
-        traceValues.erase(traceValues.begin());
+        //traceValues.erase(traceValues.begin());
 
         if (r > 0.5) {
             player1->increment_wins();
@@ -315,7 +318,7 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
             // cout << "Player 1 Hand: " << endl;
 
 
-            player1->take_turn(deck, discardPile, traceValues, player2);
+            player1->take_turn(deck, discardPile, player2);
             if (player1->check_showing()) {
                 // update outputs
                 outputs['N'] ++; // add 1 to turn counter
@@ -341,7 +344,7 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
             }
             // DEBUG
             // cout << "Player 2 Hand: " << endl;
-            player2->take_turn(deck, discardPile, traceValues, player1);
+            player2->take_turn(deck, discardPile, player1);
 
             // update outputs
             // outputs need to be updated after each turn to see who is closer to winning (according to instructions)
@@ -442,15 +445,15 @@ void shuffle_cards(vector<Card>& cards) {
 
     for (int c = 0; c < (int)cards.size(); c ++) {
         // if trace values run out, return error
-        if (traceValues.empty()) {
+        /*if (traceValues.empty()) {
             cerr << "Error: not enough trace values for shuffling" << endl;
             exit(1);
-        }
+        }*/
 
         // use trace values for randomness
-        r = traceValues[0];
+        r = get_traceValue(); // traceValues[0];
         // remove used trace value
-        traceValues.erase(traceValues.begin());
+        //traceValues.erase(traceValues.begin());
         p = (r * (cards.size() - c)) + c;
         
         // Swap Cards
@@ -497,3 +500,20 @@ bool validate_deck(vector<Card>& deck) {
 
     return valid;
 }
+
+double get_traceValue() {
+    // First check that we have a value to give
+    if (traceFileStream.eof()) {
+        cerr << "Not enough values in trace file" << endl;
+        return -1.0;
+    }
+
+    // get value
+    double traceValue = -1;
+    if (traceFileStream >> traceValue) {
+        return traceValue;
+    }
+
+    cerr << "get_traceValue() executed incorrectly" << endl;
+    return -1.0;
+ }

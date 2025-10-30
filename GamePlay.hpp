@@ -21,5 +21,6 @@ void play_trash(map<char, int>&, Player*& , Player*& , vector<Card>&);
 vector<Card> make_deck(char);
 void shuffle_cards(vector<Card>&);
 bool validate_deck(vector<Card>&);
+double get_traceValue();
 
 #endif
