@@ -14,8 +14,9 @@ void setup_war(Player*&, Player*&, vector<Card>&);
 void play_war(map<char, int>&, Player*&, Player*&);
 
 // Trash
-void setup_trash(Player& , Player& , vector<Card>&);
+void setup_trash(Player*& , Player*& , vector<Card>&);
 void play_trash(map<char, int>&, Player*& , Player*& , vector<Card>&);
+void update_trash_stats(map<char, int>&, Player*&, Player*&, int&);
 
 // Additional Helpers
 vector<Card> make_deck(char);

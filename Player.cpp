@@ -27,7 +27,7 @@ Card Player::draw_from_playing_hand() {
     // draw top card from the playing hand
     if (playingHand.empty()) {
         cerr << "Error: cannot draw from playing hand because it is empty" << endl;
-        return Card(-1, -1); 
+        exit(1); 
     }
 
     // top of the deck will be considered the last card in the vector (thus pop_back is acceptable)
@@ -109,26 +109,70 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, Player
     }
     
     // with the current card in hand, check if the card can be swapped with anything in array
-    while (check_need(curCard) && !check_showing()) {
+    while (check_need(curCard)) {
         // DEBUG
-        // cout << "Current Card in Hand: " << curCard.read_numID() << " " << curCard.read_suitID() << endl;
+        cout << "Current Card in Hand: " << curCard.read_numID() << " " << curCard.read_suitID() << endl;
 
-        // initialize index to match current card number's index
-        int index = curCard.read_numID() - 1;
 
-        // if current card in hand is a jack, run the check algorithm to decide which card in array to swap with jack
-        if (curCard.read_charID() == 'J') {
-            index = run_jack_algorithm(discardPile, otherPlayer);
-        } 
+        // if all cards in array haven't been flipped up yet, continue to flip
+        if (!check_showing()) {
+             // initialize index to match current card number's index
+            int index = curCard.read_numID() - 1;
 
-        // swap cards
-        swap_card(curCard, index);
+            // if current card in hand is a jack, run the check algorithm to decide which card in array to swap with jack
+            if (curCard.read_charID() == 'J') {
+                index = run_jack_algorithm(discardPile, otherPlayer);
+            } 
+
+            // swap cards
+            swap_card(curCard, index);
+        }
+        
+        // if all cards in array have been flipped to showing, reshuffle hand only for this player with a decremented array size
+        else {
+            // keep holding current card (do not include this in the reshuffle)
+            // combine this player's array, discard pile, draw pile
+            // place all in draw pile to make seting player hand easier
+            drawPile.insert(drawPile.begin(), discardPile.begin(), discardPile.end());
+            discardPile.clear();
+            drawPile.insert(drawPile.begin(), playingHand.begin(), playingHand.end());
+            empty_hand();
+            // set all cards to not showing and shuffle
+            for (Card& card: drawPile) { card.set_not_showing(); }
+            shuffle_cards(drawPile);
+
+            // decrement playing hand array size
+            decrement_handSize();
+            // break out of while loop if the player has won
+            if (handSize == 0) { return; }
+
+            // redistribute playing hand array & rest in draw pile
+            set_player_hand(drawPile);
+        }
+       
     }
 
     // when the current card in hand is useless, add to beginning (top) of discard pile
     discardPile.insert(discardPile.begin(), curCard);
     
 }
+
+// read hand size of player and distribute from drawPile, keeping rest in drawPile
+void Player::set_player_hand(vector<Card>& drawPile) {
+    if ((int)drawPile.size() < handSize) {
+        cerr << "Error: not enough cards in draw pile to set player hand" << endl;
+        exit(1);
+    }
+    if (handSize <= 0) {
+        cerr << "Error: cannot set player hand because hand size is less than or equal to 0" << endl;
+        exit(1);
+    }
+
+    // take top cards from draw pile to set as player's playing hand
+    playingHand.insert(playingHand.end(), drawPile.begin(), drawPile.begin() + handSize);
+    drawPile.erase(drawPile.begin(), drawPile.begin() + handSize);
+}
+
 
 // checks the current card in hand is a value that can be played with number of cards in array
 // checks if the current card value can replace a card that's faced down or slot that currently has a jack

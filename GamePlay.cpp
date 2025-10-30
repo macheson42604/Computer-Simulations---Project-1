@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
 
     // running Trash
     if (gameTypeChar == 'T') {
-        // setup already occurs in play_trash() as the setup must occur after restart each round with 1 less card in array (for one of the players)
+        setup_trash(player1, player2, deck);
         play_trash(outputs, player1, player2, deck);
     }
     // running War
@@ -304,104 +304,56 @@ void setup_trash(Player*& player1, Player*& player2, vector<Card>& deck) {
 
 void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vector<Card>& deck) {
     int winningPlayer = 0;
+    vector<Card> discardPile;
 
-    // while both players have an array of cards
+
+    // while both players have an array of cards (while no one has won)
     while (player1->read_handSize() > 0 && player2->read_handSize() > 0) {
-        setup_trash(player1, player2, deck);
-        vector<Card> discardPile;
-
-        // while both players don't have all of their cards in the array showing
-        while (!player1->check_showing() && !player2->check_showing()) {
-            // DEBUG
-            cout << "NEW TURN" << endl;
-            // DEBUG
-            // cout << "Player 1 Hand: " << endl;
-
-
-            player1->take_turn(deck, discardPile, player2);
-            if (player1->check_showing()) {
-                // update outputs
-                outputs['N'] ++; // add 1 to turn counter
-                // Determine who is currently winning
-                // Winner: whoever has a lower number of cards until winning the game
-                int player1CardCount = player1->calc_num_from_winning();
-                int player2CardCount = player2->calc_num_from_winning();
-                if (player1CardCount < player2CardCount && winningPlayer != 1) {
-                    outputs['T'] ++; // add 1 to  winning transition counter
-                    outputs['L'] = outputs['N']; // set last transition equal to the curren turn
-                    winningPlayer = 1;
-                }
-                else if (player2CardCount < player1CardCount && winningPlayer != 2) {
-                    outputs['T'] ++; // add 1 to  winning transition counter
-                    outputs['L'] = outputs['N']; // set last transition equal to the curren turn
-                    winningPlayer = 2;
-                }
-
-                cout << "Player 1 remaining cards: " << player1CardCount << endl;
-                cout << "Player 2 remaining cards: " << player2CardCount << endl;
-
-                break;
-            }
-            // DEBUG
-            // cout << "Player 2 Hand: " << endl;
-            player2->take_turn(deck, discardPile, player1);
-
-            // update outputs
-            // outputs need to be updated after each turn to see who is closer to winning (according to instructions)
-            outputs['N'] ++; // add 1 to turn counter
-
-            // Determine who is currently winning
-            // Winner: whoever has a lower number of cards until winning the game
-            int player1CardCount = player1->calc_num_from_winning();
-            int player2CardCount = player2->calc_num_from_winning();
-
-            if (player1CardCount < player2CardCount && winningPlayer != 1) {
-                outputs['T'] ++; // add 1 to  winning transition counter
-                outputs['L'] = outputs['N']; // set last transition equal to the curren turn
-                winningPlayer = 1;
-            }
-            else if (player2CardCount < player1CardCount && winningPlayer != 2) {
-                outputs['T'] ++; // add 1 to  winning transition counter
-                outputs['L'] = outputs['N']; // set last transition equal to the curren turn
-                winningPlayer = 2;
-            }
-
-            cout << "Player 1 remaining cards: " << player1CardCount << endl;
-            cout << "Player 2 remaining cards: " << player2CardCount << endl;
-            
+        player1->take_turn(deck, discardPile, player2);
+        
+        if (player1->read_handSize() == 0) {
+            update_trash_stats(outputs, player1, player2, winningPlayer);
+            break; //exit loop if player 1 has won
         }
+
 
         // DEBUG
-        // cout << "ROUND OVER" << endl;
-        // cout << "Player 1 showing: " << player1->check_showing() << endl;
-        // cout << "Player 2 showing: " << player2->check_showing() << endl;
+        // cout << "Player 2 Hand: " << endl;
+        player2->take_turn(deck, discardPile, player1);
 
-        // determine winner of round
-        if (player1->check_showing() && !player2->check_showing()) {
-            player1->decrement_handSize();
-            player1->increment_wins();
-        }
-        else if (!player1->check_showing() && player2->check_showing()) {
-            player2->decrement_handSize();
-            player2->increment_wins();
-        }
-        else {
-            cerr << "Error: both players have all cards showing - invalid state" << endl;
-            exit(1);
-        }
+        
 
-        // collect all cards back into deck for reshuffling (deck is used as the drawPile)
-        deck.insert(deck.end(), discardPile.begin(), discardPile.end());
-        const vector<Card>& p1Cards = player1->read_playing_hand();
-        const vector<Card>& p2Cards = player2->read_playing_hand();
-        deck.insert(deck.end(), p1Cards.begin(), p1Cards.end());
-        deck.insert(deck.end(), p2Cards.begin(), p2Cards.end());
-        discardPile.clear();
-        player1->empty_hand();
-        player2->empty_hand();
-        shuffle_cards(deck);
+        // DEBUG
+        // cout << "Player 1 remaining cards: " << player1CardCount << endl;
+        // cout << "Player 2 remaining cards: " << player2CardCount << endl;
+        
+        update_trash_stats(outputs, player1, player2, winningPlayer);
+    
+      
     }
 
+}
+
+void update_trash_stats(map<char, int>& outputs, Player*& player1, Player*& player2, int& winningPlayer) {
+    // update outputs
+    // outputs need to be updated after each turn to see who is closer to winning (according to instructions)
+    outputs['N'] ++; // add 1 to turn counter
+
+    // Determine who is currently winning
+    // Winner: whoever has a lower number of cards until winning the game
+    int player1CardCount = player1->calc_num_from_winning();
+    int player2CardCount = player2->calc_num_from_winning();
+
+    if (player1CardCount < player2CardCount && winningPlayer != 1) {
+        outputs['T'] ++; // add 1 to  winning transition counter
+        outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+        winningPlayer = 1;
+    }
+    else if (player2CardCount < player1CardCount && winningPlayer != 2) {
+        outputs['T'] ++; // add 1 to  winning transition counter
+        outputs['L'] = outputs['N']; // set last transition equal to the curren turn
+        winningPlayer = 2;
+    }
 }
 
 
@@ -504,16 +456,16 @@ bool validate_deck(vector<Card>& deck) {
 double get_traceValue() {
     // First check that we have a value to give
     if (traceFileStream.eof()) {
-        cerr << "Not enough values in trace file" << endl;
-        return -1.0;
+        cerr << "Error: not enough values in trace file" << endl;
+        exit(1);
     }
 
     // get value
     double traceValue = -1;
-    if (traceFileStream >> traceValue) {
-        return traceValue;
+    if (!(traceFileStream >> traceValue)) {
+        cerr << "Error: get_traceValue() executed incorrectly" << endl;
+        exit(1);
     }
 
-    cerr << "get_traceValue() executed incorrectly" << endl;
-    return -1.0;
+    return traceValue;
  }
