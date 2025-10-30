@@ -110,9 +110,6 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, Player
     
     // with the current card in hand, check if the card can be swapped with anything in array
     while (check_need(curCard)) {
-        // DEBUG
-        cout << "Current Card in Hand: " << curCard.read_numID() << " " << curCard.read_suitID() << endl;
-
 
         // if all cards in array haven't been flipped up yet, continue to flip
         if (!check_showing()) {
@@ -129,7 +126,7 @@ void Player::take_turn(vector<Card>& drawPile, vector<Card>& discardPile, Player
         }
         
         // if all cards in array have been flipped to showing, reshuffle hand only for this player with a decremented array size
-        else {
+        if (check_showing()) {
             // keep holding current card (do not include this in the reshuffle)
             // combine this player's array, discard pile, draw pile
             // place all in draw pile to make seting player hand easier
@@ -196,7 +193,7 @@ bool Player::check_need(Card& card) {
     }
     if (card.read_numID() <= (int)playingHand.size()) { 
         // check if the card at that index is not showing or is a jack
-        if (!playingHand[card.read_numID() - 1].read_isShowing() || playingHand[card.read_numID() - 1].read_charID() == 'J') { 
+        if (!playingHand[card.read_numID() - 1].read_isShowing() ||(playingHand[card.read_numID() - 1].read_isShowing() && playingHand[card.read_numID() - 1].read_charID() == 'J')) { 
             return true;
         }
     }
