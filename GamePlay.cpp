@@ -504,16 +504,15 @@ bool validate_deck(vector<Card>& deck) {
 double get_traceValue() {
     // get value
     double traceValue = -1;
-    if (traceFileStream >> traceValue) {
-        return traceValue;
+    if (!(traceFileStream >> traceValue)) {
+        cerr << "Error: get_traceValue() executed incorrectly" << endl;
+        exit(1);
     }
 
     // First check that we have a value to give
     if (traceFileStream.eof()) {
-        cerr << "Not enough values in trace file" << endl;
-        return -1.0;
+        cerr << "Error: not enough values in trace file" << endl;
+        exit(1);
     }
-
-    cerr << "get_traceValue() executed incorrectly" << endl;
-    return -1.0;
+    return traceValue;
  }
