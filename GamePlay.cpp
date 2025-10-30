@@ -310,9 +310,9 @@ void play_trash(map<char, int>& outputs, Player*& player1, Player*& player2, vec
     // while both players have an array of cards (while no one has won)
     while (player1->read_handSize() > 0 && player2->read_handSize() > 0) {
         player1->take_turn(deck, discardPile, player2);
-        
+        update_trash_stats(outputs, player1, player2, winningPlayer);
+
         if (player1->read_handSize() == 0) {
-            update_trash_stats(outputs, player1, player2, winningPlayer);
             break; //exit loop if player 1 has won
         }
 
