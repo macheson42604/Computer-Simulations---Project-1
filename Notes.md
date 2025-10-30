@@ -5,3 +5,7 @@ Create a test file
 
 Run test file
 - `./SIM war ./tests/test.dat`
+
+# Grading (Graphs)
+- `~/tmp/War-and-Trash/grader.sh`
+- `~/tmp/War-and-Trash/grader.sh . 2000`
