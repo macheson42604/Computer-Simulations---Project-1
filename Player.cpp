@@ -193,7 +193,7 @@ bool Player::check_need(Card& card) {
     }
     if (card.read_numID() <= (int)playingHand.size()) { 
         // check if the card at that index is not showing or is a jack
-        if (!playingHand[card.read_numID() - 1].read_isShowing() ||(playingHand[card.read_numID() - 1].read_isShowing() && playingHand[card.read_numID() - 1].read_charID() == 'J')) { 
+        if (!playingHand[card.read_numID() - 1].read_isShowing() || (playingHand[card.read_numID() - 1].read_isShowing() && playingHand[card.read_numID() - 1].read_charID() == 'J')) { 
             return true;
         }
     }
