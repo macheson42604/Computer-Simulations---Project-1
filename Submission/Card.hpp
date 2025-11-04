@@ -1,0 +1,66 @@
+#ifndef CARD_HPP
+#define CARD_HPP
+
+using namespace std;
+
+/*
+Class - Card
+    Purpose: To encapsulate all identification of a single card into one central object.
+    Menbers
+        Private
+            - numID (short int): variable
+                The value assigned to each card, utilizing the following shorthand.
+                2-10 = 2-10
+                Jack = 11
+                Queen = 12
+                King = 13
+                Ace = 14
+            - charID (char): variable
+                The primary identifier of the card itself, utilizing the following shorthand.
+                2-9 = '2-9'
+                10 = 'T'
+                Jack = 'J'
+                Queen = 'Q'
+                King = 'K'
+                Ace = 'A'
+            - suitID (char): variable
+                The classification of the card, utilizing the following shorthand.
+                Diamond = 'D'
+                Spade = 'S'
+                Heart = 'H'
+                Club = 'C'
+
+        Public
+            - Card(char, char): method
+                The inputs of this method correlate respectively and directly to charId and suitID. This then automatically deduces the numId based on the input charId.
+            - set_numID(short int) (void): method
+                Sets the numID. This should only be used to update A from 14 to 1 for the game of Trash.
+            - read_numID() (short int): method
+                Returns the numID. This is const because nothing should ever be altered in this function.
+            - read_charID() (char): method
+                Returns the charID. This is const because nothing should ever be altered in this function.
+            - read_suitID() (char): method
+                Returns the suitID. This is const because nothing should ever be altered in this function.
+*/
+class Card {
+private:
+    //Variables
+    short int numID;
+    char charID;
+    char suitID;
+    bool isShowing;
+
+public:
+    //Methods
+    Card(int, int);
+    void set_numID(short int nID);
+    void set_not_showing();
+    void showCard();
+    short int read_numID() const;
+    char read_charID() const;
+    char read_suitID() const;
+    bool read_isShowing() const;
+};
+
+
+#endif
